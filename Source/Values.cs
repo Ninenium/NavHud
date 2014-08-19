@@ -30,12 +30,12 @@ namespace NavHud
 		public bool IChanged {
 			get { bool val = _iChanged; _iChanged=false; return val;}
 		}
-		private Color _upperHalfColor = new Color(0.0f,0.5f,0.3f,1.0f);
+        private Color _upperHalfColor = new Color(0.0f,0.5f,0.3f,0.1f);
 		public Color UpperHalfColor {
 			get { return _upperHalfColor; }
 			set { if(_upperHalfColor!=value) { _upperHalfColor = value; _iChanged = true; } }
 		}
-        private Color _lowerHalfColor = new Color(0.3f,0.5f,0.0f,1.0f);
+        private Color _lowerHalfColor = new Color(0.3f,0.5f,0.0f,0.1f);
         public Color LowerHalfColor {
 			get { return _lowerHalfColor; }
 			set { if(_lowerHalfColor!=value) { _lowerHalfColor = value; _iChanged = true; } }
@@ -45,7 +45,7 @@ namespace NavHud
 			get { return _horizonColor; }
 			set { if(_horizonColor!=value) { _horizonColor = value; _iChanged = true; } }
 		}
-        private Color _azimuthColor = new Color(0.0f,0.3f,0.0f,1.0f);
+        private Color _azimuthColor = new Color(0.0f,0.3f,0.0f,0.1f);
         public Color AzimuthColor {
 			get { return _azimuthColor; }
 			set { if(_azimuthColor!=value) { _azimuthColor = value; _iChanged = true; } }
@@ -195,6 +195,7 @@ namespace NavHud
 			_vectorSize = (float) config.GetValue<double>("vectorSize");
 			_lineWidth = (float) config.GetValue<double>("lineWidth");
 			_distance = config.GetValue<double>("distance");
+            IChanged = true;
 		}
 		
 		private void SetColor(PluginConfiguration config, string text, Color color)
@@ -202,6 +203,7 @@ namespace NavHud
 			config.SetValue(text+"R", (double) color.r);
 			config.SetValue(text+"G", (double) color.g);			
 			config.SetValue(text+"B", (double) color.b);
+            config.SetValue(text+"A", (double) color.a);
 		}
 		
 		private Color GetColor(PluginConfiguration config, string text)
@@ -209,6 +211,7 @@ namespace NavHud
 			float r = (float) config.GetValue<double>(text+"R");
 			float g = (float) config.GetValue<double>(text+"G");
 			float b = (float) config.GetValue<double>(text+"B");
+            float a = (float) config.GetValue<double>(text+"A", 1.0d);
 			return new Color(r,g,b,1.0f);
 		}
 	}

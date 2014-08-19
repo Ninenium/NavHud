@@ -119,7 +119,11 @@ namespace NavHud
 				_toolbarAvailable = true;
 			}
 			#endregion
-						
+
+            // People kept hitting time acceleration by accident, so moved middle-ish.
+            _mainWindowPosition = new Rect(Screen.width / 3, Screen.height / 6, 10, 10);
+            _colorWindowPosition = new Rect(Screen.width / 2, Screen.height / 2, 10, 10);
+
 			Load();
 			
 			#region Setup hud camera
@@ -224,7 +228,11 @@ namespace NavHud
 			LinesEnabled = GUILayout.Toggle(LinesEnabled, "Show lines");
 			EnableMap = GUILayout.Toggle(EnableMap, "Show in map");
 			
-			if(GUILayout.Button("Reset")) _values = new Values();
+            if(GUILayout.Button("Reset"))
+            {
+                _values = new Values();
+                _behaviour.Values = _values;
+            }
 			
 			_sizeScrollPos = GUILayout.BeginScrollView(_sizeScrollPos, false, false, GUILayout.Height(220f));
 			
