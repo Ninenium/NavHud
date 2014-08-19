@@ -1,0 +1,20 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 11.00
+# Visual Studio 2010
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "navhud", "navhud.csproj", "{A64B1F13-F0B3-4EE6-BB2E-A06B42429485}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{A64B1F13-F0B3-4EE6-BB2E-A06B42429485}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{A64B1F13-F0B3-4EE6-BB2E-A06B42429485}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{A64B1F13-F0B3-4EE6-BB2E-A06B42429485}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{A64B1F13-F0B3-4EE6-BB2E-A06B42429485}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(MonoDevelopProperties) = preSolution
+		StartupItem = navhud.csproj
+	EndGlobalSection
+EndGlobal
