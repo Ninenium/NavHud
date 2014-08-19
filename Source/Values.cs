@@ -195,7 +195,7 @@ namespace NavHud
 			_vectorSize = (float) config.GetValue<double>("vectorSize");
 			_lineWidth = (float) config.GetValue<double>("lineWidth");
 			_distance = config.GetValue<double>("distance");
-            IChanged = true;
+            _iChanged = true;
 		}
 		
 		private void SetColor(PluginConfiguration config, string text, Color color)
@@ -212,7 +212,7 @@ namespace NavHud
 			float g = (float) config.GetValue<double>(text+"G");
 			float b = (float) config.GetValue<double>(text+"B");
             float a = (float) config.GetValue<double>(text+"A", 1.0d);
-			return new Color(r,g,b,1.0f);
+            return new Color(r,g,b,a);
 		}
 	}
 }
