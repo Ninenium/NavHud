@@ -237,12 +237,12 @@ namespace NavHud
         
         private void SetActive()
         {
-        	_zenithLines.SetActive(_active&_linesEnabled);
-        	_azimuthLines.SetActive(_active&_linesEnabled);
-        	_markers.SetDirectionsActive(_active&_markersEnabled);
-        	_targetAlignmentMarker.SetActive(_active&_markersEnabled&_alignActive);
-        	_markers.SetManeuverActive(_active&_markersEnabled&_maneuverActive);
-        	_markers.SetTargetActive(_active&_markersEnabled&_targetActive);
+            _zenithLines.SetActive(_active && _linesEnabled);
+            _azimuthLines.SetActive(_active && _linesEnabled);
+            _markers.SetDirectionsActive(_active && _markersEnabled);
+            _targetAlignmentMarker.SetActive(_active && _markersEnabled && _alignActive);
+            _markers.SetManeuverActive(_active && _markersEnabled &&_maneuverActive);
+            _markers.SetTargetActive(_active && _markersEnabled && _targetActive);
         }
         
         private void SetValues(Values values)
