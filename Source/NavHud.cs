@@ -238,7 +238,6 @@ namespace NavHud
 
         private void OnMainWindow(int windowID)
         {
-
             GUILayout.BeginHorizontal();
             Enabled = GUILayout.Toggle(Enabled, "Show HUD", GUILayout.ExpandWidth(true));
             _settingKeyBinding ^= GUILayout.Button("[" + (_settingKeyBinding ? "???" : _toggleKey.ToString()) + "]", GUILayout.Width(40f));
@@ -293,12 +292,12 @@ namespace NavHud
             GUILayout.EndScrollView();
 
             /*
-			if(GUILayout.Button("Cameras?")){
-				for(int i=0; i<Camera.allCameras.Length; i++){
-					Debug.Log(i+": "+Camera.allCameras[i].ToString()+"  "+Camera.allCameras[i].depth+"  "+Camera.allCameras[i].cullingMask);
-		   		}
-			}
-			*/
+            if(GUILayout.Button("Cameras?")){
+                for(int i=0; i<Camera.allCameras.Length; i++){
+                    Debug.Log(i+": "+Camera.allCameras[i].ToString()+"  "+Camera.allCameras[i].depth+"  "+Camera.allCameras[i].cullingMask);
+                }
+            }
+            */
 
             GUILayout.Label("Colors", labelStyle, GUILayout.ExpandWidth(true));
             _colorScrollPos = GUILayout.BeginScrollView(_colorScrollPos, false, false, GUILayout.Height(250f));
