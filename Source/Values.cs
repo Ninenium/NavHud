@@ -239,7 +239,7 @@ namespace NavHud
             }
         }
 
-        private int _numberZenithVerts = 64;
+        private int _numberZenithVerts = 128;
         public int NumberZenithVerts {
             get { return _numberZenithVerts; }
             set {
@@ -251,7 +251,7 @@ namespace NavHud
             }
         }
 
-        private int _numberAzimuthVerts = 24;
+        private int _numberAzimuthVerts = 64;
         public int NumberAzimuthVerts {
             get { return _numberAzimuthVerts; }
             set {

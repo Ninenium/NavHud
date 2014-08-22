@@ -1,4 +1,4 @@
-NavHud - 1.1 - by Ninenium
+NavHud - 1.1.1 - by Ninenium
 
 A heads up display with the markers from the NavBall and docking alignment indicator.
 Compatible with: blizzy78's Toolbar mod.
@@ -10,6 +10,13 @@ License:
 MIT
 
 Change-log:
+version 1.1.1
+ - Fixed reset button bug (Addle)
+ - Fixed alpha channel save bug (Addle)
+ - Tweaked default alpha channel setting (Addle)
+ - Changed default window position (Addle)
+ - Added KSP-AVC support (Addle)
+ - Tweaked heading marker
 version 1.1
  - Changed settings window layout.
  - Added alpha channel option.

@@ -94,8 +94,9 @@ namespace NavHud
 
         public void SetPositions(Vector3d heading, Vector3d right, Vector3d down)
         {
-            float a = _size * 3f;
-            float b = _size * 1f;
+            float a = _size * 3.0f;
+            float b = _size * 0.7f;
+            float c = _size * 1.0f;
             Vector3d down2 = new Vector3d(down.x, down.y, 0);
             _lines[0].SetPosition(0, _r * (heading + a * right));
             _lines[0].SetPosition(1, _r * (heading + b * right));
@@ -104,21 +105,21 @@ namespace NavHud
             _lines[0].SetPosition(4, _r * (heading - b * right));
             _lines[0].SetPosition(5, _r * (heading - a * right));
 
-            _lines[1].SetPosition(0, _r * (heading - 0.5 * b * down2));
+            _lines[1].SetPosition(0, _r * (heading - 0.5 * c * down2));
             _lines[1].SetPosition(1, _r * (heading));
 
             _lines[2].SetPosition(0, _r * (-heading + a * right));
-            _lines[2].SetPosition(1, _r * (-heading + b * right));
-            _lines[2].SetPosition(2, _r * (-heading + 0.5 * b * (-down + 1.001f * right)));
-            _lines[2].SetPosition(3, _r * (-heading + 0.5 * b * (-down + 0.999f * right)));
+            _lines[2].SetPosition(1, _r * (-heading + c * right));
+            _lines[2].SetPosition(2, _r * (-heading + 0.5 * c * (-down + 1.001f * right)));
+            _lines[2].SetPosition(3, _r * (-heading + 0.5 * c * (-down + 0.999f * right)));
             _lines[2].SetPosition(4, _r * (-heading + 0.001f * right));
             _lines[2].SetPosition(5, _r * (-heading - 0.001f * right));
-            _lines[2].SetPosition(6, _r * (-heading + 0.5 * b * (-down - 0.999f * right)));
-            _lines[2].SetPosition(7, _r * (-heading + 0.5 * b * (-down - 1.001f * right)));
-            _lines[2].SetPosition(8, _r * (-heading - b * right));
+            _lines[2].SetPosition(6, _r * (-heading + 0.5 * c * (-down - 0.999f * right)));
+            _lines[2].SetPosition(7, _r * (-heading + 0.5 * c * (-down - 1.001f * right)));
+            _lines[2].SetPosition(8, _r * (-heading - c * right));
             _lines[2].SetPosition(9, _r * (-heading - a * right));
 
-            _lines[3].SetPosition(0, _r * (-heading + 0.5 * b * down2));
+            _lines[3].SetPosition(0, _r * (-heading + 0.5 * c * down2));
             _lines[3].SetPosition(1, _r * (-heading));
         }
     }
