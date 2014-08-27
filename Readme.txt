@@ -1,4 +1,4 @@
-NavHud - 1.1.1 - by Ninenium
+NavHud - 1.1.2 - by Ninenium
 Some parts were written by Michel Dusseault (Addle or RealGrep on Github).
 
 A heads up display with the markers from the NavBall and docking alignment indicator.
