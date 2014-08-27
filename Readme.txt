@@ -1,7 +1,10 @@
 NavHud - 1.1.1 - by Ninenium
+Some parts were written by Michel Dusseault (Addle or RealGrep on Github).
 
 A heads up display with the markers from the NavBall and docking alignment indicator.
 Compatible with: blizzy78's Toolbar mod.
+
+Note: Holding LeftAlt while hitting the toggle key (default Y) cycles the speed display mode.
 
 Installation:
 Copy the content of the 'GameData' folder to the 'GameData' folder of your KSP installation.
@@ -10,6 +13,8 @@ License:
 MIT
 
 Change-log:
+version 1.1.2
+ - Added a HUD text display so the navball can be closed completely without missing the information contained on it. Also added settings options for it. Note that holding LeftAlt and hitting the toggle key will cycle through the speed display modes (Surface, Orbit and Target). (Addle)
 version 1.1.1
  - Fixed reset button bug (Addle)
  - Fixed alpha channel save bug (Addle)
