@@ -35,6 +35,18 @@ namespace NavHud
             }
         }
 
+        private Color _hudTextColor = Color.green;
+        public Color HudTextColor {
+            get { return _hudTextColor; }
+            set {
+                if (_hudTextColor != value)
+                {
+                    _hudTextColor = value;
+                    _iChanged = true;
+                }
+            }
+        }
+
         private Color _upperHalfColor = new Color(0.0f, 0.5f, 0.3f, 0.1f);
         public Color UpperHalfColor {
             get { return _upperHalfColor; }
@@ -305,6 +317,7 @@ namespace NavHud
 
         public void Save(PluginConfiguration config)
         {
+            SetColor(config, "hudTextColor", _hudTextColor);
             SetColor(config, "upperHalfColor", _upperHalfColor);
             SetColor(config, "lowerHalfColor", _lowerHalfColor);
             SetColor(config, "horizonColor", _horizonColor);
@@ -331,6 +344,7 @@ namespace NavHud
 
         public void Load(PluginConfiguration config)
         {
+            _hudTextColor = GetColor(config, "hudTextColor");
             _upperHalfColor = GetColor(config, "upperHalfColor");
             _lowerHalfColor = GetColor(config, "lowerHalfColor");
             _horizonColor = GetColor(config, "horizonColor");

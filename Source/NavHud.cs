@@ -24,6 +24,7 @@ using KSP;
 using UnityEngine;
 using KSP.IO;
 using System.Collections;
+using System.Collections.Generic;
 
 namespace NavHud
 {
@@ -80,6 +81,28 @@ namespace NavHud
             }
         }
 
+        private bool _enableText = true;
+        public bool EnableText {
+            get { return _enableText; }
+            set {
+                if (_enableText != value)
+                {
+                    _enableText = value;
+                }
+            }
+        }
+
+        private bool _lockText = true;
+        public bool LockText {
+            get { return _lockText; }
+            set {
+                if (_lockText != value)
+                {
+                    _lockText = value;
+                }
+            }
+        }
+
         private MainBehaviour _behaviour;
         private Values _values = new Values();
 
@@ -107,6 +130,7 @@ namespace NavHud
         private Rect _mainWindowPosition, _colorWindowPosition;
         private Vector2 _colorWindowScrollPos, _colorScrollPos, _sizeScrollPos;
         private bool _mainWindowVisible = false, _colorWindowVisible = false;
+        private Rect _hudTextWindowPosition;
 
         public NavHud()
         {
@@ -129,6 +153,7 @@ namespace NavHud
             // People kept hitting time acceleration by accident, so moved middle-ish.
             _mainWindowPosition = new Rect(Screen.width / 3, Screen.height / 6, 10, 10);
             _colorWindowPosition = new Rect(Screen.width / 2, Screen.height / 2, 10, 10);
+            _hudTextWindowPosition = new Rect(Screen.width / 2 - 20.0f, Screen.height * 0.7f, 10, 10);
 
             Load();
 
@@ -160,9 +185,16 @@ namespace NavHud
 
         void Update()
         {
+            // The toggle key toggles the HUD on and off, and holding down LeftAlt while
+            // hitting the toggle key will cycle through the speed modes.
             if (Input.GetKeyDown(_toggleKey))
             {
-                Enabled = !Enabled;
+                if (Input.GetKey(KeyCode.LeftAlt))
+                {
+                    FlightUIController.fetch.cycleSpdModes();
+                } else {
+                    Enabled = !Enabled;
+                }
             }
         }
 
@@ -172,6 +204,9 @@ namespace NavHud
             config.SetValue("version", _version);
             config.SetValue("main window position", _mainWindowPosition);
             config.SetValue("color window position", _colorWindowPosition);
+            config.SetValue("hud text position", _hudTextWindowPosition);
+            config.SetValue("enable text", _enableText);
+            config.SetValue("lock text", _lockText);
             config.SetValue("toggle key", _toggleKey);
             config.SetValue("enabled", _enabled);
             config.SetValue("linesEnabled", _linesEnabled);
@@ -191,6 +226,9 @@ namespace NavHud
             } else {
                 _mainWindowPosition = config.GetValue<Rect>("main window position");
                 _colorWindowPosition = config.GetValue<Rect>("color window position");
+                _hudTextWindowPosition = config.GetValue<Rect>("hud text position", new Rect(Screen.width / 2 - 20.0f, Screen.height * 0.7f, 10, 10));
+                _enableText = config.GetValue("enable text", true);
+                _lockText = config.GetValue("lock text", false);
                 _toggleKey = config.GetValue<KeyCode>("toggle key");
                 _enabled = config.GetValue<bool>("enabled");
                 _linesEnabled = config.GetValue<bool>("linesEnabled");
@@ -226,6 +264,14 @@ namespace NavHud
                 _colorWindowPosition = GUILayout.Window(99242, _colorWindowPosition, OnColorWindow, "Color Picker", colorWindowStyle);
             }
 
+            if (_enabled && _enableText)
+            {
+                _hudTextWindowPosition = GUILayout.Window(99243, _hudTextWindowPosition, OnHudTextWindow, "", GUIStyle.none);
+            }
+
+            GUIStyle hudTextSettingsWindowStyle = new GUIStyle(HighLogic.Skin.window);
+            hudTextSettingsWindowStyle.fixedWidth = 300f;
+
             if (_settingKeyBinding)
             {
                 if (Event.current.isKey)
@@ -245,6 +291,8 @@ namespace NavHud
             MarkersEnabled = GUILayout.Toggle(MarkersEnabled, "Show markers");
             LinesEnabled = GUILayout.Toggle(LinesEnabled, "Show lines");
             EnableMap = GUILayout.Toggle(EnableMap, "Show in map");
+            EnableText = GUILayout.Toggle(EnableText, "Show HUD text");
+            LockText = GUILayout.Toggle(LockText, "Lock HUD text");
 
             if (GUILayout.Button("Reset"))
             {
@@ -301,6 +349,7 @@ namespace NavHud
 
             GUILayout.Label("Colors", labelStyle, GUILayout.ExpandWidth(true));
             _colorScrollPos = GUILayout.BeginScrollView(_colorScrollPos, false, false, GUILayout.Height(250f));
+            if (ColorButton(_values.HudTextColor, "HUD Text Color")) OnColorWindow = OnColorWindowHudText;
             GUILayout.Label("Markers", labelStyle, GUILayout.ExpandWidth(true));
             if (ColorButton(_values.HeadingColor, "Heading")) OnColorWindow = OnColorWindowHeading;
             if (ColorButton(_values.ProgradeColor, "Velocity")) OnColorWindow = OnColorWindowPrograde;
@@ -326,6 +375,162 @@ namespace NavHud
                 Debug.Log("NavHUD settings changed.");
             }
             GUI.DragWindow();
+        }
+
+        private void OnHudTextWindow(int windowID)
+        {
+            Vessel vessel = FlightGlobals.fetch.activeVessel;
+            double vel = 0.0d;
+            string speedLabel;
+
+            switch (FlightUIController.speedDisplayMode)
+            {
+            case FlightUIController.SpeedDisplayModes.Surface:
+                vel = FlightGlobals.ship_srfSpeed;
+                speedLabel = "Surface: " + vel.ToString("F2") + "m/s";
+                break;
+
+            case FlightUIController.SpeedDisplayModes.Orbit:
+                vel = FlightGlobals.ship_obtSpeed;
+                speedLabel = "Orbit: " + vel.ToString("F2") + "m/s";
+                break;
+
+            case FlightUIController.SpeedDisplayModes.Target:
+                vel = FlightGlobals.ship_tgtSpeed;
+                speedLabel = "Target: " + vel.ToString("F2") + "m/s";
+                break;
+
+            default:
+                throw new ArgumentOutOfRangeException();
+            }
+
+            GUIStyle hudTextStyle = new GUIStyle();
+            hudTextStyle.normal.textColor = _values.HudTextColor;
+            GUILayout.BeginVertical();
+
+            GUILayout.Label(speedLabel, hudTextStyle);
+            GUILayout.Label("Throttle: " + vessel.ctrlState.mainThrottle.ToString("P1"), hudTextStyle);
+
+            if (vessel != null && vessel.patchedConicSolver != null &&
+                vessel.patchedConicSolver.maneuverNodes != null &&
+                vessel.patchedConicSolver.maneuverNodes.Count > 0)
+            {
+                ManeuverNode node = vessel.patchedConicSolver.maneuverNodes[0];
+                double burnDV = node.DeltaV.magnitude;
+                double burnRem = node.GetBurnVector(vessel.orbit).magnitude;
+                GUILayout.Label("Burn ΔV: " + burnRem.ToString("F2") + "m/s / " + burnDV.ToString("F2") + "m/s", hudTextStyle);
+
+                if (burnRem != double.NaN)
+                {
+                    double thrust = calcThrust();
+                    GUILayout.Label("Burn time: " + calcBurnTime(burnRem, vessel.GetTotalMass(), thrust).ToString("F1") +
+                        "s / " + calcBurnTime(burnDV, vessel.GetTotalMass(), thrust).ToString("F1") + "s",
+                        hudTextStyle);
+                }
+
+                double timeToNode = node.UT - Planetarium.GetUniversalTime();
+                if (Math.Sign(timeToNode) >= 0)
+                {
+                    GUILayout.Label("Node in T - " + GetTimeString(Math.Abs(timeToNode)), hudTextStyle);
+                } else {
+                    GUILayout.Label("Node in T + " + GetTimeString(Math.Abs(timeToNode)), hudTextStyle);
+                }
+            }
+
+            GUILayout.EndVertical();
+            if (!_lockText)
+            {
+                GUI.DragWindow();
+            }
+        }
+
+        // TODO: Account for thrust vector that is offset from CoM
+        double calcBurnTime(double deltaV, double initialMass, double thrust)
+        {
+            return initialMass * deltaV / thrust;
+        }
+
+        double calcThrust()
+        {
+            double totalThrust = 0.0;
+            Vessel vessel = FlightGlobals.fetch.activeVessel;
+
+            foreach (Part part in vessel.parts)
+            {
+                if (part.Modules.Contains("ModuleEngines"))
+                {
+                    foreach (PartModule module in part.Modules)
+                    {
+                        if (module is ModuleEngines && module.isEnabled)
+                        {
+                            ModuleEngines engine = (ModuleEngines)module;
+                            if (!engine.getFlameoutState)
+                            {
+                                totalThrust += engine.maxThrust;
+                            }
+                        }
+                    }
+                }
+                else if (part.Modules.Contains("ModuleEnginesFX"))
+                {
+                    foreach (PartModule module in part.Modules)
+                    {
+                        if (module is ModuleEnginesFX && module.isEnabled)
+                        {
+                            ModuleEnginesFX engine = (ModuleEnginesFX)module;
+                            if (!engine.getFlameoutState)
+                            {
+                                totalThrust += engine.maxThrust;
+                            }
+                        }
+                    }
+                }
+            }
+            return totalThrust;
+        }
+
+        public static int HOURS_PER_DAY
+        {
+            get { return GameSettings.KERBIN_TIME ? 6 : 24; }
+        }
+        public static int DAYS_PER_YEAR
+        {
+            get { return GameSettings.KERBIN_TIME ? 426 : 365; }
+        }
+        private string GetTimeString(double seconds)
+        {
+            double s = seconds;
+            string timestr = "";
+            int[] factors = new int[] {60*60*HOURS_PER_DAY*DAYS_PER_YEAR,
+                60*60*HOURS_PER_DAY, 60*60, 60, 1};
+            string[] postfixes = new string[] { "y ", "d ", ":", ":", "" };
+
+            bool sawNonZero = false;
+            for (int i = 0; i < postfixes.Length; ++i)
+            {
+                long val = 0;
+                if (s >= (double)factors[i])
+                {
+                    val = (int)(s / (double)factors[i]);
+                    s -= (double)(val * factors[i]);
+                }
+
+                if (!sawNonZero)
+                {
+                    if (val > 0)
+                    {
+                        sawNonZero = true;
+                    } else {
+                        continue;
+                    }
+                    timestr += val.ToString();
+                } else {
+                    timestr += val.ToString("00");
+                }
+                timestr += postfixes[i];
+            }
+
+            return timestr;
         }
 
         private void OnColorWindowHeading(int windowID)
@@ -401,6 +606,11 @@ namespace NavHud
         private void OnColorWindowAzimuth(int windowID)
         {
             _values.AzimuthColor = ColorChanger(_values.AzimuthColor, "Vertical");
+        }
+
+        private void OnColorWindowHudText(int windowID)
+        {
+            _values.HudTextColor = ColorChanger(_values.HudTextColor, "HUD Text Color");
         }
 
         private bool ColorButton(Color color, string text)
