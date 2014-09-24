@@ -230,10 +230,10 @@ namespace NavHud
                 _enableText = config.GetValue("enable text", true);
                 _lockText = config.GetValue("lock text", false);
                 _toggleKey = config.GetValue<KeyCode>("toggle key");
-                _enabled = config.GetValue<bool>("enabled");
-                _linesEnabled = config.GetValue<bool>("linesEnabled");
-                _markersEnabled = config.GetValue<bool>("markersEnabled");
-                _enableMap = config.GetValue<bool>("enableMap");
+                _enabled = config.GetValue<bool>("enabled", true);
+                _linesEnabled = config.GetValue<bool>("linesEnabled", true);
+                _markersEnabled = config.GetValue<bool>("markersEnabled", true);
+                _enableMap = config.GetValue<bool>("enableMap", false);
                 _values.Load(config);
             }
         }
@@ -383,6 +383,25 @@ namespace NavHud
             double vel = 0.0d;
             string speedLabel;
 
+            GUIStyle hudTextStyle = new GUIStyle();
+            hudTextStyle.normal.textColor = _values.HudTextColor;
+
+            GUILayout.BeginVertical();
+
+            bool isRCSOn = FlightInputHandler.RCSLock;
+            bool isSASOn = vessel.ActionGroups[KSPActionGroup.SAS];
+
+            GUILayout.BeginHorizontal();
+            if (isSASOn)
+            {
+                GUILayout.Label("SAS", hudTextStyle);
+            }
+            if (isRCSOn)
+            {
+                GUILayout.Label("RCS", hudTextStyle);
+            }
+            GUILayout.EndHorizontal();
+
             switch (FlightUIController.speedDisplayMode)
             {
             case FlightUIController.SpeedDisplayModes.Surface:
@@ -404,12 +423,11 @@ namespace NavHud
                 throw new ArgumentOutOfRangeException();
             }
 
-            GUIStyle hudTextStyle = new GUIStyle();
-            hudTextStyle.normal.textColor = _values.HudTextColor;
-            GUILayout.BeginVertical();
-
             GUILayout.Label(speedLabel, hudTextStyle);
             GUILayout.Label("Throttle: " + vessel.ctrlState.mainThrottle.ToString("P1"), hudTextStyle);
+
+            GUILayout.Label("Heading: " + FlightGlobals.ship_heading.ToString("F1"), hudTextStyle);
+            GUILayout.Label("G Force: " + FlightGlobals.ship_geeForce.ToString("F1"), hudTextStyle);
 
             if (vessel != null && vessel.patchedConicSolver != null &&
                 vessel.patchedConicSolver.maneuverNodes != null &&
