@@ -388,7 +388,7 @@ namespace NavHud
 
             GUILayout.BeginVertical();
 
-            bool isRCSOn = FlightInputHandler.RCSLock;
+            bool isRCSOn = vessel.ActionGroups[KSPActionGroup.RCS];
             bool isSASOn = vessel.ActionGroups[KSPActionGroup.SAS];
 
             GUILayout.BeginHorizontal();
