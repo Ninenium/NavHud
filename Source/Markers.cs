@@ -30,15 +30,15 @@ namespace NavHud
     {
         private GameObject[] _objects;
 
-        public const int Prograde   = 0;
-        public const int Retrograde = 1;
-        public const int Normal     = 2;
-        public const int Antinormal = 3;
-        public const int Radial     = 4;
-        public const int Antiradial = 5;
-        public const int Target     = 6;
-        public const int Antitarget = 7;
-        public const int Maneuver   = 8;
+        private const int Prograde   = 0;
+        private const int Retrograde = 1;
+        private const int Normal     = 2;
+        private const int Antinormal = 3;
+        private const int Radial     = 4;
+        private const int Antiradial = 5;
+        private const int Target     = 6;
+        private const int Antitarget = 7;
+        private const int Maneuver   = 8;
 
         private double _r;
 

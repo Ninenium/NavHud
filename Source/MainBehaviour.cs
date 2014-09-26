@@ -75,6 +75,10 @@ namespace NavHud
         private HeadingMarker _headingMarker;
         private TargetAlignmentMarker _targetAlignmentMarker;
         private Markers _markers;
+        private EdgeMarkers _edgeMarkers;
+        
+        private Vector3 _smoothVel = Vector3.zero;
+        //private Vector3 _estAccel = Vector3.zero;
 
         public MainBehaviour()
         {
@@ -86,10 +90,45 @@ namespace NavHud
             _azimuthLines = new AzimuthLines();
             _targetAlignmentMarker = new TargetAlignmentMarker();
             _markers = new Markers();
+            _edgeMarkers = new EdgeMarkers();
         }
 
         void Start()
         {
+        }
+
+        void FixedUpdate()
+        {
+            Vector3 vel;
+            switch (FlightUIController.speedDisplayMode)
+            {
+            case FlightUIController.SpeedDisplayModes.Surface:
+                vel = FlightGlobals.ship_srfVelocity;
+                break;
+
+            case FlightUIController.SpeedDisplayModes.Orbit:
+                vel = FlightGlobals.ship_obtVelocity;
+                break;
+
+            case FlightUIController.SpeedDisplayModes.Target:
+                vel = FlightGlobals.ship_tgtVelocity;
+                break;
+
+            default:
+                throw new ArgumentOutOfRangeException();
+            }
+
+            if(_smoothVel.magnitude<1.0f)
+            {
+                //float speed = vel.magnitude;
+                //Vector3 nSmoothVel = (_smoothVel+_estAccel)*(1.0f-speed) + speed*vel;
+                //_estAccel = nSmoothVel-_smoothVel;
+                //_smoothVel = nSmoothVel;
+                _smoothVel += vel.magnitude*(vel-_smoothVel);
+            } else {
+                //_estAccel = Vector3.zero;
+                _smoothVel = vel;
+            }
         }
 
         void OnPreCull()
@@ -99,11 +138,13 @@ namespace NavHud
                 if (!_active)
                 {
                     _headingMarker.SetActive(true);
+                    _edgeMarkers.SetHeadingActive(true);
                     _active = true;
                 }
                 Matrix4x4 worldToCamMat = _mainCam.transform.worldToLocalMatrix;
                 _hudCam.fieldOfView = _mainCam.fieldOfView;
-                UpdateHeadingMarkers(worldToCamMat);
+                Vector3 screenEdge = _hudCam.ScreenPointToRay(Vector3.zero).direction;
+                UpdateHeadingMarkers(worldToCamMat, screenEdge);
                 if (LinesEnabled)
                 {
                     if (!_linesActive)
@@ -126,29 +167,33 @@ namespace NavHud
                     if (!_markersActive)
                     {
                         _markers.SetDirectionsActive(true);
+                        _edgeMarkers.SetDirectionsActive(true);
                         _markersActive = true;
                     }
-                    UpdateMarkers(worldToCamMat);
+                    UpdateMarkers(worldToCamMat, screenEdge);
                     if (FlightGlobals.fetch.VesselTarget != null)
                     {
                         if (!_targetActive)
                         {
                             _markers.SetTargetActive(true);
+                            _edgeMarkers.SetTargetActive(true);
                             _targetActive = true;
                         }
-                        UpdateTargetMarkers(worldToCamMat);
+                        UpdateTargetMarkers(worldToCamMat, screenEdge);
                         if (FlightGlobals.fetch.VesselTarget.GetTargetingMode() == VesselTargetModes.DirectionVelocityAndOrientation)
                         {
                             if (!_alignActive)
                             {
                                 _targetAlignmentMarker.SetActive(true);
+                                _edgeMarkers.SetAlignmentActive(true);
                                 _alignActive = true;
                             }
-                            UpdateAlignMarkers(worldToCamMat);
+                            UpdateAlignMarkers(worldToCamMat, screenEdge);
                         } else {
                             if (_alignActive)
                             {
                                 _targetAlignmentMarker.SetActive(false);
+                                _edgeMarkers.SetAlignmentActive(false);
                                 _alignActive = false;
                             }
                         }
@@ -156,11 +201,13 @@ namespace NavHud
                         if (_targetActive)
                         {
                             _markers.SetTargetActive(false);
+                            _edgeMarkers.SetTargetActive(false);
                             _targetActive = false;
                         }
                         if (_alignActive)
                         {
                             _targetAlignmentMarker.SetActive(false);
+                            _edgeMarkers.SetAlignmentActive(false);
                             _alignActive = false;
                         }
                     }
@@ -169,13 +216,15 @@ namespace NavHud
                         if (!_maneuverActive)
                         {
                             _markers.SetManeuverActive(true);
+                            _edgeMarkers.SetManeuverActive(true);
                             _maneuverActive = true;
                         }
-                        UpdateManeuverMarker(worldToCamMat);
+                        UpdateManeuverMarker(worldToCamMat, screenEdge);
                     } else {
                         if (_maneuverActive)
                         {
                             _markers.SetManeuverActive(false);
+                            _edgeMarkers.SetManeuverActive(false);
                             _maneuverActive = false;
                         }
                     }
@@ -183,20 +232,24 @@ namespace NavHud
                     if (_markersActive)
                     {
                         _markers.SetDirectionsActive(false);
+                        _edgeMarkers.SetDirectionsActive(false);
                         _markersActive = false;
                         if (_targetActive)
                         {
                             _markers.SetTargetActive(false);
+                            _edgeMarkers.SetTargetActive(false);
                             _targetActive = false;
                         }
                         if (_alignActive)
                         {
                             _targetAlignmentMarker.SetActive(false);
+                            _edgeMarkers.SetTargetActive(false);
                             _alignActive = false;
                         }
                         if (_maneuverActive)
                         {
                             _markers.SetManeuverActive(false);
+                            _edgeMarkers.SetManeuverActive(false);
                             _maneuverActive = false;
                         }
                     }
@@ -205,6 +258,7 @@ namespace NavHud
                 if (_active)
                 {
                     _headingMarker.SetActive(false);
+                    _edgeMarkers.SetHeadingActive(false);
                     _active = false;
                     if (_linesActive)
                     {
@@ -215,21 +269,25 @@ namespace NavHud
                     if (_markersActive)
                     {
                         _markers.SetDirectionsActive(false);
+                        _edgeMarkers.SetDirectionsActive(false);
                         _markersActive = false;
                     }
                     if (_targetActive)
                     {
                         _markers.SetTargetActive(false);
+                        _edgeMarkers.SetTargetActive(false);
                         _targetActive = false;
                     }
                     if (_alignActive)
                     {
                         _targetAlignmentMarker.SetActive(false);
+                        _edgeMarkers.SetAlignmentActive(false);
                         _alignActive = false;
                     }
                     if (_maneuverActive)
                     {
                         _markers.SetManeuverActive(false);
+                        _edgeMarkers.SetManeuverActive(false);
                         _maneuverActive = false;
                     }
                 }
@@ -240,7 +298,7 @@ namespace NavHud
         {
             GameObject.Destroy(_hudCam.gameObject);
         }
-
+        /*
         private void SetActive()
         {
             _zenithLines.SetActive(_active && _linesEnabled);
@@ -249,7 +307,11 @@ namespace NavHud
             _targetAlignmentMarker.SetActive(_active && _markersEnabled && _alignActive);
             _markers.SetManeuverActive(_active && _markersEnabled && _maneuverActive);
             _markers.SetTargetActive(_active && _markersEnabled && _targetActive);
-        }
+            _edgeMarkers.SetDirectionsActive(_active && _markersEnabled && _edgeMarkersEnabled);
+            _edgeMarkers.SetAlignmentActive(_active && _markersEnabled && _edgeMarkersEnabled && _alignActive);
+            _edgeMarkers.SetManeuverActive(_active && _markersEnabled && _edgeMarkersEnabled && _maneuverActive);
+            _edgeMarkers.SetTargetActive(_active && _markersEnabled && _edgeMarkersEnabled && _targetActive);
+        }*/
 
         private void SetValues(Values values)
         {
@@ -258,6 +320,7 @@ namespace NavHud
             _azimuthLines.SetValues(values);
             _targetAlignmentMarker.SetValues(values);
             _markers.SetValues(values);
+            _edgeMarkers.SetValues(values);
         }
 
         private void SetParent(Transform parent)
@@ -267,6 +330,7 @@ namespace NavHud
             _zenithLines.SetParent(parent);
             _targetAlignmentMarker.SetParent(parent);
             _markers.SetParent(parent);
+            _edgeMarkers.SetParent(parent);
         }
 
         private void UpdateLines(Matrix4x4 worldToCamMat)
@@ -283,61 +347,67 @@ namespace NavHud
             _azimuthLines.SetPositions(up, east);
         }
 
-        private void UpdateHeadingMarkers(Matrix4x4 worldToCamMat)
+        private void UpdateHeadingMarkers(Matrix4x4 worldToCamMat, Vector3 screenEdge)
         {
             Vector3d hdg = worldToCamMat.MultiplyVector(FlightGlobals.ActiveVessel.ReferenceTransform.up).normalized;
             Vector3d rgt = worldToCamMat.MultiplyVector(FlightGlobals.ActiveVessel.ReferenceTransform.right).normalized;
             Vector3d dwn = worldToCamMat.MultiplyVector(FlightGlobals.ActiveVessel.ReferenceTransform.forward).normalized;
             _headingMarker.SetPositions(hdg, rgt, dwn);
+            _edgeMarkers.SetHeading(hdg, screenEdge);
         }
 
-        private void UpdateMarkers(Matrix4x4 worldToCamMat)
+        private void UpdateMarkers(Matrix4x4 worldToCamMat, Vector3 screenEdge)
         {
             Vector3d up = worldToCamMat.MultiplyVector(FlightGlobals.upAxis).normalized;
-            Vector3d prograde;
+            /*Vector3d prograde;
             switch (FlightUIController.speedDisplayMode)
             {
             case FlightUIController.SpeedDisplayModes.Surface:
-                prograde = FlightGlobals.ship_srfVelocity.normalized;
+                prograde = FlightGlobals.ship_srfVelocity;
                 break;
 
             case FlightUIController.SpeedDisplayModes.Orbit:
-                prograde = FlightGlobals.ship_obtVelocity.normalized;
+                prograde = FlightGlobals.ship_obtVelocity;
                 break;
 
             case FlightUIController.SpeedDisplayModes.Target:
-                prograde = FlightGlobals.ship_tgtVelocity.normalized;
+                prograde = FlightGlobals.ship_tgtVelocity;
                 break;
 
             default:
                 throw new ArgumentOutOfRangeException();
-            }
-            Vector3d pgd = worldToCamMat.MultiplyVector(prograde).normalized;
+            }*/
+            Vector3d pgd = worldToCamMat.MultiplyVector(_smoothVel).normalized;
             Vector3d nrm = Vector3.Cross(pgd, up).normalized;
             Vector3d rad = Vector3.Cross(pgd, nrm).normalized;
 
             _markers.SetDirections(pgd, nrm, rad);
+            _edgeMarkers.SetDirections(pgd, nrm, rad, screenEdge);
         }
 
-        private void UpdateTargetMarkers(Matrix4x4 worldToCamMat)
+        private void UpdateTargetMarkers(Matrix4x4 worldToCamMat, Vector3 screenEdge)
         {
-            Transform targetTranform = FlightGlobals.fetch.vesselTargetTransform;
-            _markers.SetTarget(worldToCamMat.MultiplyVector(targetTranform.position - FlightGlobals.ActiveVessel.ReferenceTransform.position).normalized);
+            Vector3 target = worldToCamMat.MultiplyVector(FlightGlobals.fetch.vesselTargetTransform.position - FlightGlobals.ActiveVessel.ReferenceTransform.position).normalized;
+            _markers.SetTarget(target);
+            _edgeMarkers.SetTarget(target, screenEdge);
         }
 
-        private void UpdateAlignMarkers(Matrix4x4 worldToCamMat)
+        private void UpdateAlignMarkers(Matrix4x4 worldToCamMat, Vector3 screenEdge)
         {
             Transform targetTranform = FlightGlobals.fetch.vesselTargetTransform;
             Vector3d fwd = worldToCamMat.MultiplyVector(targetTranform.forward).normalized;
             Vector3d rgt = worldToCamMat.MultiplyVector(targetTranform.right).normalized;
             Vector3d up = worldToCamMat.MultiplyVector(targetTranform.up).normalized;
             _targetAlignmentMarker.SetPositions(fwd, rgt, up);
+            _edgeMarkers.SetAlignment(fwd, screenEdge);
         }
 
-        private void UpdateManeuverMarker(Matrix4x4 worldToCamMat)
+        private void UpdateManeuverMarker(Matrix4x4 worldToCamMat, Vector3 screenEdge)
         {
             Vector3d burnvector = FlightGlobals.ActiveVessel.patchedConicSolver.maneuverNodes[0].GetBurnVector(FlightGlobals.ActiveVessel.orbit);
-            _markers.SetManeuver(worldToCamMat.MultiplyVector(burnvector).normalized);
+            Vector3 maneuver = worldToCamMat.MultiplyVector(burnvector).normalized;
+            _markers.SetManeuver(maneuver);
+            _edgeMarkers.SetManeuver(maneuver, screenEdge);
         }
     }
 }
