@@ -37,6 +37,7 @@
     <Compile Include="NavHud.cs" />
     <Compile Include="ZenithLines.cs" />
     <Compile Include="HeadingMarker.cs" />
+    <Compile Include="EdgeMarkers.cs" />
     <Compile Include="Markers.cs" />
     <Compile Include="TargetAlignmentMarker.cs" />
     <Compile Include="Values.cs" />
