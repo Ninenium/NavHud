@@ -264,7 +264,7 @@ namespace NavHud
                 _colorWindowPosition = GUILayout.Window(99242, _colorWindowPosition, OnColorWindow, "Color Picker", colorWindowStyle);
             }
 
-            if (_enabled && _enableText)
+            if (_enabled && _enableText && (!MapView.MapIsEnabled || _enableMap))
             {
                 _hudTextWindowPosition = GUILayout.Window(99243, _hudTextWindowPosition, OnHudTextWindow, "", GUIStyle.none);
             }
