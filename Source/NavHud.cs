@@ -233,7 +233,7 @@ namespace NavHud
                 _enabled = config.GetValue<bool>("enabled", true);
                 _linesEnabled = config.GetValue<bool>("linesEnabled", true);
                 _markersEnabled = config.GetValue<bool>("markersEnabled", true);
-                _enableMap = config.GetValue<bool>("enableMap", false);
+                _enableMap = config.GetValue<bool>("enabledMap", false);
                 _values.Load(config);
             }
         }
