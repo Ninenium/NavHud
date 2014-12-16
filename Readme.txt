@@ -14,6 +14,8 @@ MIT
 
 Change-log:
 version 1.1.2
+ - Added triangles at screen edge that point to markers that are out of view.
+ - Added smoothing to markers at speeds below 1 m/s.
  - Added a HUD text display so the navball can be closed completely without missing the information contained on it. Also added settings options for it. Note that holding LeftAlt and hitting the toggle key will cycle through the speed display modes (Surface, Orbit and Target). (Addle)
 version 1.1.1
  - Fixed reset button bug (Addle)
