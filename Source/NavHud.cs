@@ -710,8 +710,14 @@ namespace NavHud
         void OnDestroy()
         {
             Save();
-            Destroy(_behaviour);
-            _button.Destroy();
+            if (_behaviour != null)
+            {
+                Destroy(_behaviour);
+            }
+            if (_button != null)
+            {
+                _button.Destroy();
+            }
         }
     }
 }
