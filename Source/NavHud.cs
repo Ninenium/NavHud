@@ -233,7 +233,7 @@ namespace NavHud
                 _enabled = config.GetValue<bool>("enabled", true);
                 _linesEnabled = config.GetValue<bool>("linesEnabled", true);
                 _markersEnabled = config.GetValue<bool>("markersEnabled", true);
-                _enableMap = config.GetValue<bool>("enableMap", false);
+                _enableMap = config.GetValue<bool>("enabledMap", false);
                 _values.Load(config);
             }
         }
@@ -440,9 +440,16 @@ namespace NavHud
 
                 if (burnRem != double.NaN)
                 {
-                    double thrust = calcThrust();
-                    GUILayout.Label("Burn time: " + calcBurnTime(burnRem, vessel.GetTotalMass(), thrust).ToString("F1") +
-                        "s / " + calcBurnTime(burnDV, vessel.GetTotalMass(), thrust).ToString("F1") + "s",
+                    double totalThrust = 0.0;
+                    double totalIsp = 0.0;
+                    calcThrust(ref totalThrust, ref totalIsp);
+                    if (vessel.ctrlState.mainThrottle > 0.0)
+                    {
+                        totalThrust *= vessel.ctrlState.mainThrottle;
+                    }
+                    //Debug.Log("totalThrust: " + totalThrust + "; totalIsp: " + totalIsp);
+                    GUILayout.Label("Burn time: " + calcBurnTime(burnRem, vessel.GetTotalMass(), totalThrust, totalIsp).ToString("F1") +
+                        "s / " + calcBurnTime(burnDV, vessel.GetTotalMass(), totalThrust, totalIsp).ToString("F1") + "s",
                         hudTextStyle);
                 }
 
@@ -462,49 +469,59 @@ namespace NavHud
             }
         }
 
-        // TODO: Account for thrust vector that is offset from CoM
-        double calcBurnTime(double deltaV, double initialMass, double thrust)
+        double calcBurnTime(double deltaV, double initialMass, double thrust, double isp)
         {
-            return initialMass * deltaV / thrust;
+            var exhaustVelocity = isp * 9.82;
+
+            // t = (m0 * ve / T) (1 - e^(-dv/ve))
+            return (initialMass * exhaustVelocity / thrust) * (1 - Math.Exp(-deltaV / exhaustVelocity));
         }
 
-        double calcThrust()
+        void calcThrust(ref double totalThrust, ref double totalIsp)
         {
-            double totalThrust = 0.0;
+            totalThrust = 0.0;
+            totalIsp = 0.0;
+            double thrustByIsp = 0.0;
             Vessel vessel = FlightGlobals.fetch.activeVessel;
 
             foreach (Part part in vessel.parts)
             {
-                if (part.Modules.Contains("ModuleEngines"))
+                if ((part != null) && (part.Modules != null))
                 {
-                    foreach (PartModule module in part.Modules)
+                    if (part.Modules.Contains("ModuleEngines"))
                     {
-                        if (module is ModuleEngines && module.isEnabled)
+                        foreach (PartModule module in part.Modules)
                         {
-                            ModuleEngines engine = (ModuleEngines)module;
-                            if (!engine.getFlameoutState)
+                            if (module != null && module is ModuleEngines && module.isEnabled)
                             {
-                                totalThrust += engine.maxThrust;
+                                ModuleEngines engine = (ModuleEngines)module;
+                                if (!engine.getFlameoutState)
+                                {
+                                    totalThrust += engine.maxThrust;
+                                    thrustByIsp += engine.maxThrust / engine.atmosphereCurve.Evaluate((float)vessel.staticPressure);
+                                }
                             }
                         }
                     }
-                }
-                else if (part.Modules.Contains("ModuleEnginesFX"))
-                {
-                    foreach (PartModule module in part.Modules)
+                    else if (part.Modules.Contains("ModuleEnginesFX"))
                     {
-                        if (module is ModuleEnginesFX && module.isEnabled)
+                        foreach (PartModule module in part.Modules)
                         {
-                            ModuleEnginesFX engine = (ModuleEnginesFX)module;
-                            if (!engine.getFlameoutState)
+                            if (module != null && module is ModuleEnginesFX && module.isEnabled)
                             {
-                                totalThrust += engine.maxThrust;
+                                ModuleEnginesFX engine = (ModuleEnginesFX)module;
+                                if (!engine.getFlameoutState)
+                                {
+                                    totalThrust += engine.maxThrust;
+                                    thrustByIsp += engine.maxThrust / engine.atmosphereCurve.Evaluate((float)vessel.staticPressure);
+                                }
                             }
                         }
                     }
                 }
             }
-            return totalThrust;
+
+            totalIsp = totalThrust / thrustByIsp;
         }
 
         public static int HOURS_PER_DAY
@@ -693,8 +710,14 @@ namespace NavHud
         void OnDestroy()
         {
             Save();
-            Destroy(_behaviour);
-            _button.Destroy();
+            if (_behaviour != null)
+            {
+                Destroy(_behaviour);
+            }
+            if (_button != null)
+            {
+                _button.Destroy();
+            }
         }
     }
 }
