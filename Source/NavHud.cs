@@ -171,13 +171,11 @@ namespace NavHud
             #region Setup MainBehaviour
             _behaviour = _hudCam.gameObject.AddComponent<MainBehaviour>();
             _behaviour.HudCam = _hudCam;
-            Debug.Log("behaviour created");
             _behaviour.Values = _values;
             _behaviour.Enabled = _enabled;
             _behaviour.LinesEnabled = _linesEnabled;
             _behaviour.MarkersEnabled = _markersEnabled;
             _behaviour.EnabledMap = _enableMap;
-            Debug.Log("behaviour set");
             #endregion
 
             RenderingManager.AddToPostDrawQueue(0, OnGui);

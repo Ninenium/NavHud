@@ -23,13 +23,14 @@ namespace NavHud
         private const int Antiheading   = 10;
         private const int Alignment     = 11;
         private const int Antialignment = 12;
+        private const int Waypoint      = 13;
         
         private float _r;
 
         public EdgeMarkers()
         {
-            _lines = new LineRenderer[13];
-            _objects = new GameObject[13];
+            _lines = new LineRenderer[14];
+            _objects = new GameObject[14];
 
             for (int i = 0; i < _lines.Length; i++)
             {
@@ -95,6 +96,11 @@ namespace NavHud
         {
             SetPosition(Alignment, alignment, screenedge);
             SetPosition(Antialignment, -alignment, screenedge);
+        }
+
+        public void SetWaypoint(Vector3d waypoint, Vector3 screenedge)
+        {
+            SetPosition(Waypoint, waypoint, screenedge);
         }
 
         private void SetPosition(int key, Vector3 position, Vector3 screenedge)
@@ -167,7 +173,7 @@ namespace NavHud
         {
             _objects[Maneuver].SetActive(active);
         }
-        
+
         public void SetHeadingActive(bool active)
         {
             _objects[Heading    ].SetActive(active);
@@ -178,6 +184,23 @@ namespace NavHud
         {
             _objects[Alignment    ].SetActive(active);
             _objects[Antialignment].SetActive(active);
+        }
+
+        public void SetWaypointActive(bool active)
+        {
+            _objects[Waypoint    ].SetActive(active);
+        }
+
+        public void LoadWaypointColor()
+        {
+            if(FinePrint.WaypointManager.navWaypoint != null)
+            {
+                GameObject navWaypointIndicator = GameObject.Find("NavBall").transform.FindChild("vectorsPivot").FindChild("NavWaypoint").gameObject;
+                Material material = navWaypointIndicator.renderer.material;
+                _lines[Waypoint].SetColors(material.color, material.color);
+            } else {
+                Debug.LogWarning("Tried to load texture while navWaypoint is not instantiated.");
+            }
         }
     }
 }
