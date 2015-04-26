@@ -447,7 +447,6 @@ namespace NavHud
                     {
                         totalThrust *= vessel.ctrlState.mainThrottle;
                     }
-                    //Debug.Log("totalThrust: " + totalThrust + "; totalIsp: " + totalIsp);
                     GUILayout.Label("Burn time: " + calcBurnTime(burnRem, vessel.GetTotalMass(), totalThrust, totalIsp).ToString("F1") +
                         "s / " + calcBurnTime(burnDV, vessel.GetTotalMass(), totalThrust, totalIsp).ToString("F1") + "s",
                         hudTextStyle);
@@ -497,8 +496,11 @@ namespace NavHud
                                 ModuleEngines engine = (ModuleEngines)module;
                                 if (!engine.getFlameoutState)
                                 {
-                                    totalThrust += engine.maxThrust;
-                                    thrustByIsp += engine.maxThrust / engine.atmosphereCurve.Evaluate((float)vessel.staticPressure);
+                                    double isp = engine.atmosphereCurve.Evaluate((float)(vessel.staticPressurekPa * PhysicsGlobals.KpaToAtmospheres));
+                                    double thrust = isp * engine.maxFuelFlow * engine.g;
+                                    totalThrust += thrust;
+                                    thrustByIsp += thrust / isp;
+
                                 }
                             }
                         }
@@ -512,8 +514,10 @@ namespace NavHud
                                 ModuleEnginesFX engine = (ModuleEnginesFX)module;
                                 if (!engine.getFlameoutState)
                                 {
-                                    totalThrust += engine.maxThrust;
-                                    thrustByIsp += engine.maxThrust / engine.atmosphereCurve.Evaluate((float)vessel.staticPressure);
+                                    double isp = engine.atmosphereCurve.Evaluate((float)(vessel.staticPressurekPa * PhysicsGlobals.KpaToAtmospheres));
+                                    double thrust = isp * engine.maxFuelFlow * engine.g;
+                                    totalThrust += thrust;
+                                    thrustByIsp += thrust / isp;
                                 }
                             }
                         }
