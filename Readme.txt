@@ -16,9 +16,12 @@ Change-log:
 version 1.2.0
  - Updated code for KSP 1.0 changes (Addle)
  - Made the burn time display a little better (minutes and others displayed rather than just total seconds) (Addle)
+version 1.1.4
+ - Added Waypoint support.
+ - Fixed bug "NullReferenceExeption" when patched conics isn't unlocked.
 version 1.1.3
- - Fixed bug where map view setting wasn't being saved and restored.
- - Burn calculations now take into account reducing mass during the burn (Addle)
+ - Fixed bug where map view setting wasn't being saved and restored. (Addle)
+ - Burn calculations now take into account reducing mass during the burn. (Addle)
 version 1.1.2
  - Added triangles at screen edge that point to markers that are out of view.
  - Added smoothing to markers at speeds below 1 m/s.

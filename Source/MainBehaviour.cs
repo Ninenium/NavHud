@@ -46,7 +46,7 @@ namespace NavHud
             }
         }
 
-        private bool _active, _linesActive, _markersActive, _maneuverActive, _targetActive, _alignActive;
+        private bool _active, _linesActive, _markersActive, _maneuverActive, _targetActive, _alignActive, _waypointActive;
         private bool _enabled, _linesEnabled, _markersEnabled;
 
         public bool Enabled {
@@ -76,7 +76,10 @@ namespace NavHud
         private TargetAlignmentMarker _targetAlignmentMarker;
         private Markers _markers;
         private EdgeMarkers _edgeMarkers;
-        
+        private WaypointMarker _waypointMarker;
+
+        private double _waypointSurfHeight = 0;
+
         private Vector3 _smoothVel = Vector3.zero;
         //private Vector3 _estAccel = Vector3.zero;
 
@@ -90,6 +93,7 @@ namespace NavHud
             _azimuthLines = new AzimuthLines();
             _targetAlignmentMarker = new TargetAlignmentMarker();
             _markers = new Markers();
+            _waypointMarker = new WaypointMarker();
             _edgeMarkers = new EdgeMarkers();
         }
 
@@ -211,7 +215,7 @@ namespace NavHud
                             _alignActive = false;
                         }
                     }
-                    if (FlightGlobals.ActiveVessel.patchedConicSolver.maneuverNodes.Count > 0)
+                    if (FlightGlobals.ActiveVessel.patchedConicSolver != null && FlightGlobals.ActiveVessel.patchedConicSolver.maneuverNodes.Count > 0)
                     {
                         if (!_maneuverActive)
                         {
@@ -228,6 +232,37 @@ namespace NavHud
                             _maneuverActive = false;
                         }
                     }
+                    if (FinePrint.WaypointManager.navIsActive())
+                    {
+                        if (!_waypointActive) 
+                        {
+                            _waypointMarker.SetActive(true);
+                            _edgeMarkers.SetWaypointActive(true);
+                            _waypointActive = true;
+                            _waypointMarker.LoadTexture();
+                            _edgeMarkers.LoadWaypointColor();
+                            if (FlightGlobals.ActiveVessel.mainBody.pqsController != null)
+                            {
+                                NavWaypoint navWp = FinePrint.WaypointManager.navWaypoint;
+                                Vector3d pqsRadialVector = QuaternionD.AngleAxis(navWp.longitude, Vector3d.down) * QuaternionD.AngleAxis(navWp.latitude, Vector3d.forward) * Vector3d.right;
+                                _waypointSurfHeight = FlightGlobals.ActiveVessel.mainBody.pqsController.GetSurfaceHeight(pqsRadialVector)
+                                    - FlightGlobals.ActiveVessel.mainBody.pqsController.radius;
+                                if (_waypointSurfHeight < 0)
+                                {
+                                    _waypointSurfHeight = 0;
+                                }
+                            }
+                        }
+                        UpdateWaypointMarker(worldToCamMat, screenEdge);
+                    } else {
+                        if (_waypointActive)
+                        {
+                            _waypointMarker.SetActive(false);
+                            _edgeMarkers.SetWaypointActive(false);
+                            _waypointActive = false;
+                        }
+                    }
+
                 } else {
                     if (_markersActive)
                     {
@@ -251,6 +286,12 @@ namespace NavHud
                             _markers.SetManeuverActive(false);
                             _edgeMarkers.SetManeuverActive(false);
                             _maneuverActive = false;
+                        }
+                        if (_waypointActive)
+                        {
+                            _waypointMarker.SetActive(false);
+                            _edgeMarkers.SetWaypointActive(false);
+                            _waypointActive = false;
                         }
                     }
                 }
@@ -290,6 +331,12 @@ namespace NavHud
                         _edgeMarkers.SetManeuverActive(false);
                         _maneuverActive = false;
                     }
+                    if (_waypointActive)
+                    {
+                        _waypointMarker.SetActive(false);
+                        _edgeMarkers.SetWaypointActive(false);
+                        _waypointActive = false;
+                    }
                 }
             }
         }
@@ -320,6 +367,7 @@ namespace NavHud
             _azimuthLines.SetValues(values);
             _targetAlignmentMarker.SetValues(values);
             _markers.SetValues(values);
+            _waypointMarker.SetValues(values);
             _edgeMarkers.SetValues(values);
         }
 
@@ -330,6 +378,7 @@ namespace NavHud
             _zenithLines.SetParent(parent);
             _targetAlignmentMarker.SetParent(parent);
             _markers.SetParent(parent);
+            _waypointMarker.SetParent(parent);
             _edgeMarkers.SetParent(parent);
         }
 
@@ -408,6 +457,15 @@ namespace NavHud
             Vector3 maneuver = worldToCamMat.MultiplyVector(burnvector).normalized;
             _markers.SetManeuver(maneuver);
             _edgeMarkers.SetManeuver(maneuver, screenEdge);
+        }
+
+        private void UpdateWaypointMarker(Matrix4x4 worldToCamMat, Vector3 screenEdge){
+            NavWaypoint navWp = FinePrint.WaypointManager.navWaypoint;
+            //I can't find a way to get the reference body of the waypoint so I'm using the activevessel's mainbody
+            Vector3d waypointWorldPos = FlightGlobals.ActiveVessel.mainBody.GetWorldSurfacePosition(navWp.latitude, navWp.longitude, navWp.altitude + _waypointSurfHeight);
+            Vector3 waypoint = worldToCamMat.MultiplyVector(waypointWorldPos - FlightGlobals.ActiveVessel.ReferenceTransform.position).normalized;
+            _waypointMarker.SetPositions(waypoint);
+            _edgeMarkers.SetWaypoint(waypoint, screenEdge);
         }
     }
 }

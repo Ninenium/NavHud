@@ -120,16 +120,19 @@ namespace NavHud
 
         public void SetValues(Values values)
         {
+            // The colors of the Particles/Additive shader turn out to be twice as bright.. somehow..?
+            // So I'll multiply by scaleColor to compensate.
+            Color scaleColor = new Color(0.5f, 0.5f, 0.5f, 0.5f);
             _r = values.Distance;
-            _objects[Prograde  ].renderer.material.SetColor("_TintColor", values.ProgradeColor);
-            _objects[Retrograde].renderer.material.SetColor("_TintColor", values.ProgradeColor);
-            _objects[Normal    ].renderer.material.SetColor("_TintColor", values.NormalColor);
-            _objects[Antinormal].renderer.material.SetColor("_TintColor", values.NormalColor);
-            _objects[Radial    ].renderer.material.SetColor("_TintColor", values.RadialColor);
-            _objects[Antiradial].renderer.material.SetColor("_TintColor", values.RadialColor);
-            _objects[Target    ].renderer.material.SetColor("_TintColor", values.TargetColor);
-            _objects[Antitarget].renderer.material.SetColor("_TintColor", values.TargetColor);
-            _objects[Maneuver  ].renderer.material.SetColor("_TintColor", values.ManeuverColor);
+            _objects[Prograde  ].renderer.material.SetColor("_TintColor", values.ProgradeColor*scaleColor);
+            _objects[Retrograde].renderer.material.SetColor("_TintColor", values.ProgradeColor*scaleColor);
+            _objects[Normal    ].renderer.material.SetColor("_TintColor", values.NormalColor*scaleColor);
+            _objects[Antinormal].renderer.material.SetColor("_TintColor", values.NormalColor*scaleColor);
+            _objects[Radial    ].renderer.material.SetColor("_TintColor", values.RadialColor*scaleColor);
+            _objects[Antiradial].renderer.material.SetColor("_TintColor", values.RadialColor*scaleColor);
+            _objects[Target    ].renderer.material.SetColor("_TintColor", values.TargetColor*scaleColor);
+            _objects[Antitarget].renderer.material.SetColor("_TintColor", values.TargetColor*scaleColor);
+            _objects[Maneuver  ].renderer.material.SetColor("_TintColor", values.ManeuverColor*scaleColor);
             for (int i = 0; i < 9; i++)
             {
                 _objects[i].transform.localScale = values.VectorSize * Vector3.one;
