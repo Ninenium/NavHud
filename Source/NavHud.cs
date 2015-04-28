@@ -445,9 +445,10 @@ namespace NavHud
                     {
                         totalThrust *= vessel.ctrlState.mainThrottle;
                     }
-                    //Debug.Log("totalThrust: " + totalThrust + "; totalIsp: " + totalIsp);
-                    GUILayout.Label("Burn time: " + calcBurnTime(burnRem, vessel.GetTotalMass(), totalThrust, totalIsp).ToString("F1") +
-                        "s / " + calcBurnTime(burnDV, vessel.GetTotalMass(), totalThrust, totalIsp).ToString("F1") + "s",
+
+                    double burnTimeRem = calcBurnTime(burnRem, vessel.GetTotalMass(), totalThrust, totalIsp);
+                    double burnTimeTotal = calcBurnTime(burnDV, vessel.GetTotalMass(), totalThrust, totalIsp);
+                    GUILayout.Label("Burn time: " + GetTimeString(burnTimeRem) + " / " + GetTimeString(burnTimeTotal),
                         hudTextStyle);
                 }
 
@@ -495,8 +496,11 @@ namespace NavHud
                                 ModuleEngines engine = (ModuleEngines)module;
                                 if (!engine.getFlameoutState)
                                 {
-                                    totalThrust += engine.maxThrust;
-                                    thrustByIsp += engine.maxThrust / engine.atmosphereCurve.Evaluate((float)vessel.staticPressure);
+                                    double isp = engine.atmosphereCurve.Evaluate((float)(vessel.staticPressurekPa * PhysicsGlobals.KpaToAtmospheres));
+                                    double thrust = isp * engine.maxFuelFlow * engine.g;
+                                    totalThrust += thrust;
+                                    thrustByIsp += thrust / isp;
+
                                 }
                             }
                         }
@@ -510,8 +514,10 @@ namespace NavHud
                                 ModuleEnginesFX engine = (ModuleEnginesFX)module;
                                 if (!engine.getFlameoutState)
                                 {
-                                    totalThrust += engine.maxThrust;
-                                    thrustByIsp += engine.maxThrust / engine.atmosphereCurve.Evaluate((float)vessel.staticPressure);
+                                    double isp = engine.atmosphereCurve.Evaluate((float)(vessel.staticPressurekPa * PhysicsGlobals.KpaToAtmospheres));
+                                    double thrust = isp * engine.maxFuelFlow * engine.g;
+                                    totalThrust += thrust;
+                                    thrustByIsp += thrust / isp;
                                 }
                             }
                         }
@@ -536,7 +542,7 @@ namespace NavHud
             string timestr = "";
             int[] factors = new int[] {60*60*HOURS_PER_DAY*DAYS_PER_YEAR,
                 60*60*HOURS_PER_DAY, 60*60, 60, 1};
-            string[] postfixes = new string[] { "y ", "d ", ":", ":", "" };
+            string[] postfixes = new string[] { "y ", "d ", "h:", "m:", "s" };
 
             bool sawNonZero = false;
             for (int i = 0; i < postfixes.Length; ++i)
@@ -563,6 +569,8 @@ namespace NavHud
                 timestr += postfixes[i];
             }
 
+            if (timestr.Length == 0)
+                timestr = "0s";
             return timestr;
         }
 
