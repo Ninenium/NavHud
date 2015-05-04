@@ -72,6 +72,18 @@ namespace NavHud
             }
         }
 
+        private bool _waypointsEnabled = true;
+        public bool WaypointsEnabled {
+            get { return _waypointsEnabled; }
+            set {
+                if (_waypointsEnabled != value)
+                {
+                    _waypointsEnabled = value;
+                    _behaviour.WaypointsEnabled = value;
+                }
+            }
+        }
+
         private bool _enableMap = false;
         public bool EnableMap {
             get { return _enableMap; }
@@ -175,6 +187,7 @@ namespace NavHud
             _behaviour.Enabled = _enabled;
             _behaviour.LinesEnabled = _linesEnabled;
             _behaviour.MarkersEnabled = _markersEnabled;
+            _behaviour.WaypointsEnabled = _waypointsEnabled;
             _behaviour.EnabledMap = _enableMap;
             #endregion
 
@@ -209,6 +222,7 @@ namespace NavHud
             config.SetValue("enabled", _enabled);
             config.SetValue("linesEnabled", _linesEnabled);
             config.SetValue("markersEnabled", _markersEnabled);
+            config.SetValue("waypointsEnabled", _waypointsEnabled);
             config.SetValue("enabledMap", _enableMap);
             _values.Save(config);
             config.save();
@@ -231,6 +245,7 @@ namespace NavHud
                 _enabled = config.GetValue<bool>("enabled", true);
                 _linesEnabled = config.GetValue<bool>("linesEnabled", true);
                 _markersEnabled = config.GetValue<bool>("markersEnabled", true);
+                _waypointsEnabled = config.GetValue<bool>("waypointsEnabled", true);
                 _enableMap = config.GetValue<bool>("enabledMap", false);
                 _values.Load(config);
             }
@@ -287,6 +302,7 @@ namespace NavHud
             _settingKeyBinding ^= GUILayout.Button("[" + (_settingKeyBinding ? "???" : _toggleKey.ToString()) + "]", GUILayout.Width(40f));
             GUILayout.EndHorizontal();
             MarkersEnabled = GUILayout.Toggle(MarkersEnabled, "Show markers");
+            WaypointsEnabled = GUILayout.Toggle(WaypointsEnabled, "Show Waypoints");
             LinesEnabled = GUILayout.Toggle(LinesEnabled, "Show lines");
             EnableMap = GUILayout.Toggle(EnableMap, "Show in map");
             EnableText = GUILayout.Toggle(EnableText, "Show HUD text");
