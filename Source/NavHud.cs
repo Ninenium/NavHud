@@ -265,7 +265,7 @@ namespace NavHud
             }
 
             GUIStyle mainWindowStyle = new GUIStyle(HighLogic.Skin.window);
-            mainWindowStyle.fixedWidth = 200f;
+            mainWindowStyle.fixedWidth = 470f;
             if (_mainWindowVisible)
             {
                 _mainWindowPosition = GUILayout.Window(99241, _mainWindowPosition, OnMainWindow, "NavHud", mainWindowStyle);
@@ -297,6 +297,9 @@ namespace NavHud
 
         private void OnMainWindow(int windowID)
         {
+            GUILayout.BeginHorizontal(GUILayout.Width(450f));
+            GUILayout.BeginVertical(GUILayout.Width(200f));
+
             GUILayout.BeginHorizontal();
             Enabled = GUILayout.Toggle(Enabled, "Show HUD", GUILayout.ExpandWidth(true));
             _settingKeyBinding ^= GUILayout.Button("[" + (_settingKeyBinding ? "???" : _toggleKey.ToString()) + "]", GUILayout.Width(40f));
@@ -313,6 +316,10 @@ namespace NavHud
                 _values = new Values();
                 _behaviour.Values = _values;
             }
+
+            // MMD
+            GUILayout.EndVertical();
+            GUILayout.BeginVertical(GUILayout.Width(250f));
 
             _sizeScrollPos = GUILayout.BeginScrollView(_sizeScrollPos, false, false, GUILayout.Height(220f));
 
@@ -382,6 +389,9 @@ namespace NavHud
             if (ColorButton(_values.LowerHalfColor, "Lower half")) OnColorWindow = OnColorWindowLowerHalf;
             if (ColorButton(_values.AzimuthColor, "Vertical")) OnColorWindow = OnColorWindowAzimuth;
             GUILayout.EndScrollView();
+
+            GUILayout.EndVertical();
+            GUILayout.EndHorizontal();
 
             if (_values.IChanged)
             {
