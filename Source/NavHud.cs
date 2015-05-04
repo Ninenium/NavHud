@@ -72,6 +72,18 @@ namespace NavHud
             }
         }
 
+        private bool _waypointEnabled = true;
+        public bool WaypointEnabled {
+            get { return _waypointEnabled; }
+            set {
+                if (_waypointEnabled != value)
+                {
+                    _waypointEnabled = value;
+                    _behaviour.WaypointEnabled = value;
+                }
+            }
+        }
+
         private bool _enableMap = false;
         public bool EnableMap {
             get { return _enableMap; }
@@ -111,6 +123,7 @@ namespace NavHud
 
         private bool _toolbarAvailable = false;
         private IButton _button;
+        public ApplicationLauncherButton stockButton;
 
         private UnityEngine.GUI.WindowFunction onColorWindow;
 
@@ -148,6 +161,16 @@ namespace NavHud
                 _button.OnClick += (e) => _mainWindowVisible = !_mainWindowVisible;
                 _toolbarAvailable = true;
             }
+            else{
+                if (ApplicationLauncher.Ready)
+                {
+                    OnGUIAppLauncherReady();
+                }
+                else
+                {
+                    GameEvents.onGUIApplicationLauncherReady.Add(OnGUIAppLauncherReady);
+                }
+            }
             #endregion
 
             // People kept hitting time acceleration by accident, so moved middle-ish.
@@ -175,6 +198,7 @@ namespace NavHud
             _behaviour.Enabled = _enabled;
             _behaviour.LinesEnabled = _linesEnabled;
             _behaviour.MarkersEnabled = _markersEnabled;
+            _behaviour.WaypointEnabled = _waypointEnabled;
             _behaviour.EnabledMap = _enableMap;
             #endregion
 
@@ -209,6 +233,7 @@ namespace NavHud
             config.SetValue("enabled", _enabled);
             config.SetValue("linesEnabled", _linesEnabled);
             config.SetValue("markersEnabled", _markersEnabled);
+            config.SetValue("waypointEnabled", _waypointEnabled);
             config.SetValue("enabledMap", _enableMap);
             _values.Save(config);
             config.save();
@@ -231,24 +256,44 @@ namespace NavHud
                 _enabled = config.GetValue<bool>("enabled", true);
                 _linesEnabled = config.GetValue<bool>("linesEnabled", true);
                 _markersEnabled = config.GetValue<bool>("markersEnabled", true);
+                _waypointEnabled = config.GetValue<bool>("waypointEnabled", true);
                 _enableMap = config.GetValue<bool>("enabledMap", false);
                 _values.Load(config);
             }
         }
 
         #region GUI stuff
+        void OnGUIAppLauncherReady()
+        {
+            {
+                this.stockButton = ApplicationLauncher.Instance.AddModApplication(
+                    delegate() {
+                        _mainWindowVisible = true;
+                    },
+                    delegate() {
+                        _mainWindowVisible = false;
+                    }
+                    ,
+                    null,
+                    null,
+                    null,
+                    null,
+                    ApplicationLauncher.AppScenes.FLIGHT | ApplicationLauncher.AppScenes.MAPVIEW,
+                    (Texture)GameDatabase.Instance.GetTexture("NavHud/ToolbarIcon", false));
+            }
+        }
 
         void OnGui()
         {
             GUI.skin = HighLogic.Skin;
-
+            /* // Old button
             if (!_toolbarAvailable)
             {
                 GUILayout.BeginArea(new Rect(200f, 0f, 230f, 30f));
                 _mainWindowVisible ^= GUILayout.Button("NH", GUILayout.Width(30f));
                 GUILayout.EndArea();
             }
-
+            */
             GUIStyle mainWindowStyle = new GUIStyle(HighLogic.Skin.window);
             mainWindowStyle.fixedWidth = 200f;
             if (_mainWindowVisible)
@@ -288,6 +333,7 @@ namespace NavHud
             GUILayout.EndHorizontal();
             MarkersEnabled = GUILayout.Toggle(MarkersEnabled, "Show markers");
             LinesEnabled = GUILayout.Toggle(LinesEnabled, "Show lines");
+            WaypointEnabled = GUILayout.Toggle(WaypointEnabled, "Show waypoint");
             EnableMap = GUILayout.Toggle(EnableMap, "Show in map");
             EnableText = GUILayout.Toggle(EnableText, "Show HUD text");
             LockText = GUILayout.Toggle(LockText, "Lock HUD text");
@@ -719,6 +765,11 @@ namespace NavHud
             if (_behaviour != null)
             {
                 Destroy(_behaviour);
+            }
+            if (!_toolbarAvailable)
+            {
+                GameEvents.onGUIApplicationLauncherReady.Remove(OnGUIAppLauncherReady);
+                ApplicationLauncher.Instance.RemoveModApplication(stockButton);
             }
             if (_button != null)
             {
