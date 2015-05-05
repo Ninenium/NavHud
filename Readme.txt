@@ -1,4 +1,4 @@
-NavHud - 1.2.0.2 - by Ninenium
+NavHud - 1.2.1 - by Ninenium
 Some parts were written by Michel Dusseault (Addle or RealGrep on Github).
 
 A heads up display with the markers from the NavBall and docking alignment indicator.
@@ -14,11 +14,9 @@ MIT
 
 Change-log:
 version 1.2.1
- - Added option to hide NavHud display when UI is hidden with F2.
-version 1.2.0.2
- - Recompiled against KSP 1.0.2 and bumped up the version number.
-version 1.2.0.1
- - Recompiled against KSP 1.0.1 and bumped up the version number.
+ - Added option to hide NavHud display when UI is hidden with F2 (Addle).
+ - Added option to disable waypoint.
+ - Replaced default button by button in applauncher.
 version 1.2.0
  - Updated code for KSP 1.0 changes (Addle)
  - Made the burn time display a little better (minutes and others displayed rather than just total seconds) (Addle)

@@ -47,7 +47,7 @@ namespace NavHud
         }
 
         private bool _active, _linesActive, _markersActive, _maneuverActive, _targetActive, _alignActive, _waypointActive;
-        private bool _enabled, _linesEnabled, _markersEnabled, _waypointsEnabled;
+        private bool _enabled, _linesEnabled, _markersEnabled, _waypointEnabled;
 
         public bool Enabled {
             get { return _enabled; }
@@ -64,9 +64,9 @@ namespace NavHud
             set { _markersEnabled = value; }
         }
 
-        public bool WaypointsEnabled {
-            get { return _waypointsEnabled; }
-            set { _waypointsEnabled = value; }
+        public bool WaypointEnabled {
+            get { return _waypointEnabled; }
+            set { _waypointEnabled = value; }
         }
 
         private bool _enabledMap = false;
@@ -237,7 +237,7 @@ namespace NavHud
                             _maneuverActive = false;
                         }
                     }
-                    if (_waypointsEnabled && FinePrint.WaypointManager.navIsActive())
+                    if (FinePrint.WaypointManager.navIsActive() && _waypointEnabled)
                     {
                         if (!_waypointActive) 
                         {
