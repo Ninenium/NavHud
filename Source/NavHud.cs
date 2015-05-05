@@ -115,6 +115,18 @@ namespace NavHud
             }
         }
 
+        private bool _hideWithUI = true;
+        public bool HideWithUI {
+            get { return _hideWithUI; }
+            set {
+                if (_hideWithUI != value)
+                {
+                    _hideWithUI = value;
+                }
+            }
+        }
+
+
         private MainBehaviour _behaviour;
         private Values _values = new Values();
 
@@ -203,6 +215,22 @@ namespace NavHud
             #endregion
 
             RenderingManager.AddToPostDrawQueue(0, OnGui);
+
+            GameEvents.onShowUI.Add(showUI);
+            GameEvents.onHideUI.Add(hideUI);
+        }
+
+        void showUI()
+        {
+            _behaviour.Enabled = _enabled;
+        }
+
+        void hideUI()
+        {
+            if (_hideWithUI)
+            {
+                _behaviour.Enabled = false;
+            }
         }
 
         void Update()
@@ -235,6 +263,7 @@ namespace NavHud
             config.SetValue("markersEnabled", _markersEnabled);
             config.SetValue("waypointEnabled", _waypointEnabled);
             config.SetValue("enabledMap", _enableMap);
+            config.SetValue("hideWithUI", _hideWithUI);
             _values.Save(config);
             config.save();
         }
@@ -258,6 +287,7 @@ namespace NavHud
                 _markersEnabled = config.GetValue<bool>("markersEnabled", true);
                 _waypointEnabled = config.GetValue<bool>("waypointEnabled", true);
                 _enableMap = config.GetValue<bool>("enabledMap", false);
+                _hideWithUI = config.GetValue<bool>("hideWithUI", true);
                 _values.Load(config);
             }
         }
@@ -295,7 +325,7 @@ namespace NavHud
             }
             */
             GUIStyle mainWindowStyle = new GUIStyle(HighLogic.Skin.window);
-            mainWindowStyle.fixedWidth = 200f;
+            mainWindowStyle.fixedWidth = 470f;
             if (_mainWindowVisible)
             {
                 _mainWindowPosition = GUILayout.Window(99241, _mainWindowPosition, OnMainWindow, "NavHud", mainWindowStyle);
@@ -327,6 +357,9 @@ namespace NavHud
 
         private void OnMainWindow(int windowID)
         {
+            GUILayout.BeginHorizontal(GUILayout.Width(450f));
+            GUILayout.BeginVertical(GUILayout.Width(200f));
+
             GUILayout.BeginHorizontal();
             Enabled = GUILayout.Toggle(Enabled, "Show HUD", GUILayout.ExpandWidth(true));
             _settingKeyBinding ^= GUILayout.Button("[" + (_settingKeyBinding ? "???" : _toggleKey.ToString()) + "]", GUILayout.Width(40f));
@@ -336,6 +369,7 @@ namespace NavHud
             WaypointEnabled = GUILayout.Toggle(WaypointEnabled, "Show waypoint");
             EnableMap = GUILayout.Toggle(EnableMap, "Show in map");
             EnableText = GUILayout.Toggle(EnableText, "Show HUD text");
+            HideWithUI = GUILayout.Toggle(HideWithUI, "Hide with UI");
             LockText = GUILayout.Toggle(LockText, "Lock HUD text");
 
             if (GUILayout.Button("Reset"))
@@ -343,6 +377,9 @@ namespace NavHud
                 _values = new Values();
                 _behaviour.Values = _values;
             }
+
+            GUILayout.EndVertical();
+            GUILayout.BeginVertical(GUILayout.Width(250f));
 
             _sizeScrollPos = GUILayout.BeginScrollView(_sizeScrollPos, false, false, GUILayout.Height(220f));
 
@@ -412,6 +449,9 @@ namespace NavHud
             if (ColorButton(_values.LowerHalfColor, "Lower half")) OnColorWindow = OnColorWindowLowerHalf;
             if (ColorButton(_values.AzimuthColor, "Vertical")) OnColorWindow = OnColorWindowAzimuth;
             GUILayout.EndScrollView();
+
+            GUILayout.EndVertical();
+            GUILayout.EndHorizontal();
 
             if (_values.IChanged)
             {
@@ -762,6 +802,10 @@ namespace NavHud
         void OnDestroy()
         {
             Save();
+
+            GameEvents.onShowUI.Remove(showUI);
+            GameEvents.onHideUI.Remove(hideUI);
+
             if (_behaviour != null)
             {
                 Destroy(_behaviour);
@@ -775,6 +819,8 @@ namespace NavHud
             {
                 _button.Destroy();
             }
+
         }
     }
 }
+

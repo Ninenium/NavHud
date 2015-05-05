@@ -14,6 +14,7 @@ MIT
 
 Change-log:
 version 1.2.1
+ - Added option to hide NavHud display when UI is hidden with F2 (Addle).
  - Added option to disable waypoint.
  - Replaced default button by button in applauncher.
 version 1.2.0
