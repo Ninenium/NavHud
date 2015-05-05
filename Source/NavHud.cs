@@ -115,6 +115,18 @@ namespace NavHud
             }
         }
 
+        private bool _hideWithUI = true;
+        public bool HideWithUI {
+            get { return _hideWithUI; }
+            set {
+                if (_hideWithUI != value)
+                {
+                    _hideWithUI = value;
+                }
+            }
+        }
+
+
         private MainBehaviour _behaviour;
         private Values _values = new Values();
 
@@ -192,6 +204,22 @@ namespace NavHud
             #endregion
 
             RenderingManager.AddToPostDrawQueue(0, OnGui);
+
+            GameEvents.onShowUI.Add(showUI);
+            GameEvents.onHideUI.Add(hideUI);
+        }
+
+        void showUI()
+        {
+            _behaviour.Enabled = _enabled;
+        }
+
+        void hideUI()
+        {
+            if (_hideWithUI)
+            {
+                _behaviour.Enabled = false;
+            }
         }
 
         void Update()
@@ -224,6 +252,7 @@ namespace NavHud
             config.SetValue("markersEnabled", _markersEnabled);
             config.SetValue("waypointsEnabled", _waypointsEnabled);
             config.SetValue("enabledMap", _enableMap);
+            config.SetValue("hideWithUI", _hideWithUI);
             _values.Save(config);
             config.save();
         }
@@ -247,6 +276,7 @@ namespace NavHud
                 _markersEnabled = config.GetValue<bool>("markersEnabled", true);
                 _waypointsEnabled = config.GetValue<bool>("waypointsEnabled", true);
                 _enableMap = config.GetValue<bool>("enabledMap", false);
+                _hideWithUI = config.GetValue<bool>("hideWithUI", true);
                 _values.Load(config);
             }
         }
@@ -309,6 +339,7 @@ namespace NavHud
             LinesEnabled = GUILayout.Toggle(LinesEnabled, "Show lines");
             EnableMap = GUILayout.Toggle(EnableMap, "Show in map");
             EnableText = GUILayout.Toggle(EnableText, "Show HUD text");
+            HideWithUI = GUILayout.Toggle(HideWithUI, "Hide with UI");
             LockText = GUILayout.Toggle(LockText, "Lock HUD text");
 
             if (GUILayout.Button("Reset"))
@@ -317,7 +348,6 @@ namespace NavHud
                 _behaviour.Values = _values;
             }
 
-            // MMD
             GUILayout.EndVertical();
             GUILayout.BeginVertical(GUILayout.Width(250f));
 
@@ -742,6 +772,10 @@ namespace NavHud
         void OnDestroy()
         {
             Save();
+
+            GameEvents.onShowUI.Remove(showUI);
+            GameEvents.onHideUI.Remove(hideUI);
+
             if (_behaviour != null)
             {
                 Destroy(_behaviour);
@@ -750,6 +784,8 @@ namespace NavHud
             {
                 _button.Destroy();
             }
+
         }
     }
 }
+
