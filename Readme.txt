@@ -13,6 +13,8 @@ License:
 MIT
 
 Change-log:
+version 1.2.1
+ - Added option to hide NavHud display when UI is hidden with F2.
 version 1.2.0.2
  - Recompiled against KSP 1.0.2 and bumped up the version number.
 version 1.2.0.1
