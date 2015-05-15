@@ -577,13 +577,15 @@ namespace NavHud
                     {
                         foreach (PartModule module in part.Modules)
                         {
-                            if (module != null && module is ModuleEngines && module.isEnabled)
+                            if (module != null && module is ModuleEngines && module.isActiveAndEnabled)
                             {
                                 ModuleEngines engine = (ModuleEngines)module;
-                                if (!engine.getFlameoutState)
+
+                                if (engine.isOperational && !engine.getFlameoutState)
                                 {
                                     double isp = engine.atmosphereCurve.Evaluate((float)(vessel.staticPressurekPa * PhysicsGlobals.KpaToAtmospheres));
-                                    double thrust = isp * engine.maxFuelFlow * engine.g;
+                                    //double thrust = isp * engine.maxFuelFlow * engine.g;
+                                    double thrust = engine.maxThrust;
                                     totalThrust += thrust;
                                     thrustByIsp += thrust / isp;
 
@@ -595,15 +597,18 @@ namespace NavHud
                     {
                         foreach (PartModule module in part.Modules)
                         {
-                            if (module != null && module is ModuleEnginesFX && module.isEnabled)
+                            if (module != null && module is ModuleEnginesFX && module.isActiveAndEnabled)
                             {
                                 ModuleEnginesFX engine = (ModuleEnginesFX)module;
-                                if (!engine.getFlameoutState)
+
+                                if (engine.isOperational && !engine.getFlameoutState)
                                 {
                                     double isp = engine.atmosphereCurve.Evaluate((float)(vessel.staticPressurekPa * PhysicsGlobals.KpaToAtmospheres));
-                                    double thrust = isp * engine.maxFuelFlow * engine.g;
+                                    //double thrust = isp * engine.maxFuelFlow * engine.g;
+                                    double thrust = engine.maxThrust;
                                     totalThrust += thrust;
                                     thrustByIsp += thrust / isp;
+
                                 }
                             }
                         }
