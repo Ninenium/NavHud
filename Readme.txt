@@ -1,4 +1,4 @@
-NavHud - 1.2.1 - by Ninenium
+NavHud - 1.2.2 - by Ninenium
 Some parts were written by Michel Dusseault (Addle or RealGrep on Github).
 
 A heads up display with the markers from the NavBall and docking alignment indicator.
@@ -13,6 +13,8 @@ License:
 MIT
 
 Change-log:
+version 1.2.2
+ - Fixed bug with burn times taking all engines into account due to API change (Addle).
 version 1.2.1
  - Added option to hide NavHud display when UI is hidden with F2 (Addle).
  - Added option to disable waypoint.
