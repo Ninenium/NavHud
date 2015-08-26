@@ -6,7 +6,7 @@
     "USERNAME" : "Ninenium",
     "REPOSITORY" : "NavHud",
     "ALLOW_PRE_RELEASE" : false
-  }
+  },
   "VERSION": {
     "MAJOR": 1,
     "MINOR": 2,
