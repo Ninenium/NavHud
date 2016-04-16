@@ -38,7 +38,7 @@ namespace NavHud
                 _objects[i].layer = 5;
                 // Add line
                 _lines[i] = _objects[i].AddComponent< LineRenderer >() as LineRenderer;
-                _lines[i].renderer.material = new Material(Shader.Find("Particles/Additive"));
+                _lines[i].GetComponent<Renderer>().material = new Material(Shader.Find("Particles/Additive"));
                 _lines[i].SetVertexCount(2);
             }
         }
@@ -196,7 +196,7 @@ namespace NavHud
             if(FinePrint.WaypointManager.navWaypoint != null)
             {
                 GameObject navWaypointIndicator = GameObject.Find("NavBall").transform.FindChild("vectorsPivot").FindChild("NavWaypoint").gameObject;
-                Material material = navWaypointIndicator.renderer.material;
+                Material material = navWaypointIndicator.GetComponent<Renderer>().material;
                 _lines[Waypoint].SetColors(material.color, material.color);
             } else {
                 Debug.LogWarning("Tried to load texture while navWaypoint is not instantiated.");

@@ -25,6 +25,7 @@ using UnityEngine;
 using KSP.IO;
 using System.Collections;
 using System.Collections.Generic;
+using KSP.UI.Screens;
 
 namespace NavHud
 {
@@ -36,6 +37,7 @@ namespace NavHud
         private int _version = 2;
 
         private bool _enabled = true;
+        private bool _hud_hidden = false;
 
         public bool Enabled {
             get { return _enabled; }
@@ -214,8 +216,6 @@ namespace NavHud
             _behaviour.EnabledMap = _enableMap;
             #endregion
 
-            RenderingManager.AddToPostDrawQueue(0, OnGui);
-
             GameEvents.onShowUI.Add(showUI);
             GameEvents.onHideUI.Add(hideUI);
         }
@@ -223,6 +223,8 @@ namespace NavHud
         void showUI()
         {
             _behaviour.Enabled = _enabled;
+            _hud_hidden = false;
+            _behaviour.enableCameras();
         }
 
         void hideUI()
@@ -230,6 +232,8 @@ namespace NavHud
             if (_hideWithUI)
             {
                 _behaviour.Enabled = false;
+                _hud_hidden = true;
+                _behaviour.disableCameras();
             }
         }
 
@@ -241,7 +245,9 @@ namespace NavHud
             {
                 if (Input.GetKey(KeyCode.LeftAlt))
                 {
-                    FlightUIController.fetch.cycleSpdModes();
+                    //TODO: Couldn't find a replacement for this
+                    //FlightUIController.fetch.cycleSpdModes();
+
                 } else {
                     Enabled = !Enabled;
                 }
@@ -313,9 +319,13 @@ namespace NavHud
             }
         }
 
-        void OnGui()
+        void OnGUI()
         {
-            GUI.skin = HighLogic.Skin;
+            bool showOverlay = !_hud_hidden && _enabled && _enableText && (!MapView.MapIsEnabled || _enableMap);
+            bool showMain = _mainWindowVisible;
+            bool showColour = _colorWindowVisible;
+            if (!showMain && !showColour && !showOverlay) { return; } // No GUI is enabled
+
             /* // Old button
             if (!_toolbarAvailable)
             {
@@ -326,18 +336,18 @@ namespace NavHud
             */
             GUIStyle mainWindowStyle = new GUIStyle(HighLogic.Skin.window);
             mainWindowStyle.fixedWidth = 470f;
-            if (_mainWindowVisible)
+            if (showMain)
             {
                 _mainWindowPosition = GUILayout.Window(99241, _mainWindowPosition, OnMainWindow, "NavHud", mainWindowStyle);
             }
             GUIStyle colorWindowStyle = new GUIStyle(HighLogic.Skin.window);
             colorWindowStyle.fixedWidth = 300f;
-            if (_colorWindowVisible)
+            if (showColour)
             {
                 _colorWindowPosition = GUILayout.Window(99242, _colorWindowPosition, OnColorWindow, "Color Picker", colorWindowStyle);
             }
 
-            if (_enabled && _enableText && (!MapView.MapIsEnabled || _enableMap))
+            if (showOverlay)
             {
                 _hudTextWindowPosition = GUILayout.Window(99243, _hudTextWindowPosition, OnHudTextWindow, "", GUIStyle.none);
             }

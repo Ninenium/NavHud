@@ -472,5 +472,15 @@ namespace NavHud
             _waypointMarker.SetPositions(waypoint);
             _edgeMarkers.SetWaypoint(waypoint, screenEdge);
         }
+
+        public void enableCameras()
+        {
+            _mainCam.enabled = _hudCam.enabled = true;
+        }
+
+        public void disableCameras()
+        {
+            _mainCam.enabled = _hudCam.enabled = false;
+        }
     }
 }
