@@ -47,7 +47,7 @@ namespace NavHud
                 _objects[i].layer = 5;
                 // Add line
                 _lines[i] = _objects[i].AddComponent< LineRenderer >() as LineRenderer;
-                _lines[i].renderer.material = new Material(Shader.Find("Particles/Additive"));
+                _lines[i].GetComponent<Renderer>().material = new Material(Shader.Find("Particles/Additive"));
             }
             _lines[0].SetVertexCount(6);
             _lines[1].SetVertexCount(2);

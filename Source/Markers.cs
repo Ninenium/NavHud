@@ -61,11 +61,11 @@ namespace NavHud
         {
             GameObject marker = CreateSimplePlane();
             // Get the texture (code from enhancedNavBall)
-            Texture texture = MapView.ManeuverNodePrefab.GetComponent<ManeuverGizmo>().handleNormal.flag.renderer.sharedMaterial.mainTexture;
-            marker.renderer.material = new Material(Shader.Find("Particles/Additive"));
-            marker.renderer.material.mainTexture = texture;
-            marker.renderer.material.mainTextureScale = Vector2.one / 3;
-            marker.renderer.material.mainTextureOffset = textureOffset;
+            Texture texture = MapView.ManeuverNodePrefab.GetComponent<ManeuverGizmo>().handleNormal.flag.GetComponent<Renderer>().sharedMaterial.mainTexture;
+            marker.GetComponent<Renderer>().material = new Material(Shader.Find("Particles/Additive"));
+            marker.GetComponent<Renderer>().material.mainTexture = texture;
+            marker.GetComponent<Renderer>().material.mainTextureScale = Vector2.one / 3;
+            marker.GetComponent<Renderer>().material.mainTextureOffset = textureOffset;
             return marker;
         }
 
@@ -124,15 +124,15 @@ namespace NavHud
             // So I'll multiply by scaleColor to compensate.
             Color scaleColor = new Color(0.5f, 0.5f, 0.5f, 0.5f);
             _r = values.Distance;
-            _objects[Prograde  ].renderer.material.SetColor("_TintColor", values.ProgradeColor*scaleColor);
-            _objects[Retrograde].renderer.material.SetColor("_TintColor", values.ProgradeColor*scaleColor);
-            _objects[Normal    ].renderer.material.SetColor("_TintColor", values.NormalColor*scaleColor);
-            _objects[Antinormal].renderer.material.SetColor("_TintColor", values.NormalColor*scaleColor);
-            _objects[Radial    ].renderer.material.SetColor("_TintColor", values.RadialColor*scaleColor);
-            _objects[Antiradial].renderer.material.SetColor("_TintColor", values.RadialColor*scaleColor);
-            _objects[Target    ].renderer.material.SetColor("_TintColor", values.TargetColor*scaleColor);
-            _objects[Antitarget].renderer.material.SetColor("_TintColor", values.TargetColor*scaleColor);
-            _objects[Maneuver  ].renderer.material.SetColor("_TintColor", values.ManeuverColor*scaleColor);
+            _objects[Prograde   ].GetComponent<Renderer>().material.SetColor("_TintColor", values.ProgradeColor * scaleColor);
+            _objects[Retrograde ].GetComponent<Renderer>().material.SetColor("_TintColor", values.ProgradeColor * scaleColor);
+            _objects[Normal     ].GetComponent<Renderer>().material.SetColor("_TintColor", values.NormalColor * scaleColor);
+            _objects[Antinormal ].GetComponent<Renderer>().material.SetColor("_TintColor", values.NormalColor * scaleColor);
+            _objects[Radial     ].GetComponent<Renderer>().material.SetColor("_TintColor", values.RadialColor * scaleColor);
+            _objects[Antiradial ].GetComponent<Renderer>().material.SetColor("_TintColor", values.RadialColor * scaleColor);
+            _objects[Target     ].GetComponent<Renderer>().material.SetColor("_TintColor", values.TargetColor * scaleColor);
+            _objects[Antitarget ].GetComponent<Renderer>().material.SetColor("_TintColor", values.TargetColor * scaleColor);
+            _objects[Maneuver   ].GetComponent<Renderer>().material.SetColor("_TintColor", values.ManeuverColor * scaleColor);
             for (int i = 0; i < 9; i++)
             {
                 _objects[i].transform.localScale = values.VectorSize * Vector3.one;
