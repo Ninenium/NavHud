@@ -245,9 +245,7 @@ namespace NavHud
             {
                 if (Input.GetKey(KeyCode.LeftAlt))
                 {
-                    //TODO: Couldn't find a replacement for this
-                    //FlightUIController.fetch.cycleSpdModes();
-
+                    FlightGlobals.CycleSpeedModes(); // Changed in 1.1 from FlightUIController.fetch.cycleSpdModes();
                 } else {
                     Enabled = !Enabled;
                 }
@@ -496,19 +494,19 @@ namespace NavHud
             }
             GUILayout.EndHorizontal();
 
-            switch (FlightUIController.speedDisplayMode)
+            switch (FlightGlobals.speedDisplayMode) // Changed in 1.1 from FlightUIController.speedDisplayMode
             {
-            case FlightUIController.SpeedDisplayModes.Surface:
+            case FlightGlobals.SpeedDisplayModes.Surface:
                 vel = FlightGlobals.ship_srfSpeed;
                 speedLabel = "Surface: " + vel.ToString("F2") + "m/s";
                 break;
 
-            case FlightUIController.SpeedDisplayModes.Orbit:
+            case FlightGlobals.SpeedDisplayModes.Orbit:
                 vel = FlightGlobals.ship_obtSpeed;
                 speedLabel = "Orbit: " + vel.ToString("F2") + "m/s";
                 break;
 
-            case FlightUIController.SpeedDisplayModes.Target:
+            case FlightGlobals.SpeedDisplayModes.Target:
                 vel = FlightGlobals.ship_tgtSpeed;
                 speedLabel = "Target: " + vel.ToString("F2") + "m/s";
                 break;
