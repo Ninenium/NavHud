@@ -224,7 +224,7 @@ namespace NavHud
         {
             _behaviour.Enabled = _enabled;
             _hud_hidden = false;
-            _behaviour.enableCameras();
+            _behaviour.enableCamera();
         }
 
         void hideUI()
@@ -233,7 +233,7 @@ namespace NavHud
             {
                 _behaviour.Enabled = false;
                 _hud_hidden = true;
-                _behaviour.disableCameras();
+                _behaviour.disableCamera();
             }
         }
 
