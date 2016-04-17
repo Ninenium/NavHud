@@ -51,7 +51,10 @@ namespace NavHud
 
         public bool Enabled {
             get { return _enabled; }
-            set { _enabled = value; }
+            set { 
+                _enabled = value;
+                _hudCam.enabled = value;
+            }
         }
 
         public bool LinesEnabled {
@@ -473,14 +476,5 @@ namespace NavHud
             _edgeMarkers.SetWaypoint(waypoint, screenEdge);
         }
 
-        public void enableCamera()
-        {
-            _hudCam.enabled = true;
-        }
-
-        public void disableCamera()
-        {
-            _hudCam.enabled = false;
-        }
     }
 }
