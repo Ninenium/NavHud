@@ -51,7 +51,10 @@ namespace NavHud
 
         public bool Enabled {
             get { return _enabled; }
-            set { _enabled = value; }
+            set { 
+                _enabled = value;
+                _hudCam.enabled = value;
+            }
         }
 
         public bool LinesEnabled {
@@ -109,17 +112,17 @@ namespace NavHud
         void FixedUpdate()
         {
             Vector3 vel;
-            switch (FlightUIController.speedDisplayMode)
+            switch (FlightGlobals.speedDisplayMode) // Changed in 1.1 from FlightUIController.speedDisplayMode
             {
-            case FlightUIController.SpeedDisplayModes.Surface:
+                case FlightGlobals.SpeedDisplayModes.Surface:
                 vel = FlightGlobals.ship_srfVelocity;
                 break;
 
-            case FlightUIController.SpeedDisplayModes.Orbit:
+                case FlightGlobals.SpeedDisplayModes.Orbit:
                 vel = FlightGlobals.ship_obtVelocity;
                 break;
 
-            case FlightUIController.SpeedDisplayModes.Target:
+                case FlightGlobals.SpeedDisplayModes.Target:
                 vel = FlightGlobals.ship_tgtVelocity;
                 break;
 
@@ -414,17 +417,17 @@ namespace NavHud
         {
             Vector3d up = worldToCamMat.MultiplyVector(FlightGlobals.upAxis).normalized;
             /*Vector3d prograde;
-            switch (FlightUIController.speedDisplayMode)
+            switch (FlightGlobals.speedDisplayMode) // Quoted, but I'm updating anyway - Changed in 1.1 from FlightUIController.speedDisplayMode
             {
-            case FlightUIController.SpeedDisplayModes.Surface:
+            case FlightGlobals.SpeedDisplayModes.Surface:
                 prograde = FlightGlobals.ship_srfVelocity;
                 break;
 
-            case FlightUIController.SpeedDisplayModes.Orbit:
+            case FlightGlobals.SpeedDisplayModes.Orbit:
                 prograde = FlightGlobals.ship_obtVelocity;
                 break;
 
-            case FlightUIController.SpeedDisplayModes.Target:
+            case FlightGlobals.SpeedDisplayModes.Target:
                 prograde = FlightGlobals.ship_tgtVelocity;
                 break;
 
@@ -473,14 +476,5 @@ namespace NavHud
             _edgeMarkers.SetWaypoint(waypoint, screenEdge);
         }
 
-        public void enableCameras()
-        {
-            _mainCam.enabled = _hudCam.enabled = true;
-        }
-
-        public void disableCameras()
-        {
-            _mainCam.enabled = _hudCam.enabled = false;
-        }
     }
 }
