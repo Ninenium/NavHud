@@ -39,7 +39,7 @@ namespace NavHud
             GameObject obj = new GameObject();
             MeshFilter meshFilter = obj.AddComponent<MeshFilter>();
             obj.AddComponent<MeshRenderer>();
-            obj.layer = 5;
+            obj.layer = 7;
 
             const float uvize = 1f;
 

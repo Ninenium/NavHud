@@ -58,7 +58,7 @@ namespace NavHud
                 {
                     _objects[i] = new GameObject();
                     // layers 0,1,15,19 <32
-                    _objects[i].layer = 5;
+                    _objects[i].layer = 7;
 
                     // Add line
                     _lines[i] = _objects[i].AddComponent< LineRenderer >() as LineRenderer;
