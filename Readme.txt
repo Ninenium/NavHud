@@ -1,5 +1,6 @@
-NavHud - 1.2.2 - by Ninenium
+NavHud - 1.3.0 - by Ninenium
 Some parts were written by Michel Dusseault (Addle or RealGrep on Github).
+Port to KSP version 1.1 by Chris "iPeer" Wignall
 
 A heads up display with the markers from the NavBall and docking alignment indicator.
 Compatible with: blizzy78's Toolbar mod.
@@ -13,6 +14,8 @@ License:
 MIT
 
 Change-log:
+version 1.3.0
+ - Updated to KSP 1.1 (iPeer)
 version 1.2.2
  - Fixed bug with burn times taking all engines into account due to API change (Addle).
 version 1.2.1
