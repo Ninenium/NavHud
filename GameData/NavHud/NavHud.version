@@ -1,9 +1,9 @@
 {
   "NAME": "NavHud",
-  "URL": "https://raw.githubusercontent.com/RealGrep/NavHud/master/GameData/NavHud/NavHud.version",
-  "DOWNLOAD" : "https://github.com/RealGrep/NavHud/releases",
+  "URL": "https://raw.githubusercontent.com/Ninenium/NavHud/master/GameData/NavHud/NavHud.version",
+  "DOWNLOAD" : "https://github.com/Ninenium/NavHud/releases",
   "GITHUB" : {
-    "USERNAME" : "RealGrep",
+    "USERNAME" : "Ninenium",
     "REPOSITORY" : "NavHud",
     "ALLOW_PRE_RELEASE" : false
   },
