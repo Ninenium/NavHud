@@ -1,31 +1,31 @@
 {
   "NAME": "NavHud",
-  "URL": "https://raw.githubusercontent.com/Ninenium/NavHud/master/GameData/NavHud/NavHud.version",
-  "DOWNLOAD" : "https://github.com/Ninenium/NavHud/releases",
+  "URL": "https://raw.githubusercontent.com/RealGrep/NavHud/master/GameData/NavHud/NavHud.version",
+  "DOWNLOAD" : "https://github.com/RealGrep/NavHud/releases",
   "GITHUB" : {
-    "USERNAME" : "Ninenium",
+    "USERNAME" : "RealGrep",
     "REPOSITORY" : "NavHud",
     "ALLOW_PRE_RELEASE" : false
   },
   "VERSION": {
     "MAJOR": 1,
-    "MINOR": 2,
-    "PATCH": 2,
+    "MINOR": 3,
+    "PATCH": 0,
     "BUILD": 0
   },
   "KSP_VERSION": {
     "MAJOR": 1,
-    "MINOR": 0,
-    "PATCH": 2
+    "MINOR": 1,
+    "PATCH": 0
   },
   "KSP_VERSION_MIN": {
     "MAJOR": 1,
-    "MINOR": 0,
+    "MINOR": 1,
     "PATCH": 0
   },
   "KSP_VERSION_MAX": {
     "MAJOR": 1,
-    "MINOR": 0,
+    "MINOR": 1,
     "PATCH": -1
   }
 }
