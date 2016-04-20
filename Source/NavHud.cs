@@ -201,7 +201,7 @@ namespace NavHud
             _hudCam.transform.rotation = Quaternion.identity;
             _hudCam.name = "HUDCamera";
             _hudCam.clearFlags = CameraClearFlags.Nothing;
-            _hudCam.cullingMask = (1 << 5);
+            _hudCam.cullingMask = (1 << 7);
             _hudCam.depth = 1;
             #endregion
 
