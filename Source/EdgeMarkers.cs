@@ -190,7 +190,7 @@ namespace NavHud
         {
             _objects[Waypoint    ].SetActive(active);
         }
-
+        /*
         public void LoadWaypointColor()
         {
             if(FinePrint.WaypointManager.navWaypoint != null)
@@ -201,6 +201,6 @@ namespace NavHud
             } else {
                 Debug.LogWarning("Tried to load texture while navWaypoint is not instantiated.");
             }
-        }
+        }*/
     }
 }

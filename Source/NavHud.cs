@@ -73,7 +73,7 @@ namespace NavHud
                 }
             }
         }
-
+        /* // Broken 1.1.3 waypoint code
         private bool _waypointEnabled = true;
         public bool WaypointEnabled {
             get { return _waypointEnabled; }
@@ -85,7 +85,7 @@ namespace NavHud
                 }
             }
         }
-
+        */
         private bool _enableMap = false;
         public bool EnableMap {
             get { return _enableMap; }
@@ -212,7 +212,7 @@ namespace NavHud
             _behaviour.Enabled = _enabled;
             _behaviour.LinesEnabled = _linesEnabled;
             _behaviour.MarkersEnabled = _markersEnabled;
-            _behaviour.WaypointEnabled = _waypointEnabled;
+            //_behaviour.WaypointEnabled = _waypointEnabled; // Broken 1.1.3 waypoint code
             _behaviour.EnabledMap = _enableMap;
             #endregion
 
@@ -263,7 +263,7 @@ namespace NavHud
             config.SetValue("enabled", _enabled);
             config.SetValue("linesEnabled", _linesEnabled);
             config.SetValue("markersEnabled", _markersEnabled);
-            config.SetValue("waypointEnabled", _waypointEnabled);
+            //config.SetValue("waypointEnabled", _waypointEnabled); // Broken 1.1.3 waypoint code
             config.SetValue("enabledMap", _enableMap);
             config.SetValue("hideWithUI", _hideWithUI);
             _values.Save(config);
@@ -287,7 +287,7 @@ namespace NavHud
                 _enabled = config.GetValue<bool>("enabled", true);
                 _linesEnabled = config.GetValue<bool>("linesEnabled", true);
                 _markersEnabled = config.GetValue<bool>("markersEnabled", true);
-                _waypointEnabled = config.GetValue<bool>("waypointEnabled", true);
+                // _waypointEnabled = config.GetValue<bool>("waypointEnabled", true);// Broken 1.1.3 waypoint code
                 _enableMap = config.GetValue<bool>("enabledMap", false);
                 _hideWithUI = config.GetValue<bool>("hideWithUI", true);
                 _values.Load(config);
@@ -372,7 +372,7 @@ namespace NavHud
             GUILayout.EndHorizontal();
             MarkersEnabled = GUILayout.Toggle(MarkersEnabled, "Show markers");
             LinesEnabled = GUILayout.Toggle(LinesEnabled, "Show lines");
-            WaypointEnabled = GUILayout.Toggle(WaypointEnabled, "Show waypoint");
+            //WaypointEnabled = GUILayout.Toggle(WaypointEnabled, "Show waypoint"); // Broken 1.1.3 waypoint code
             EnableMap = GUILayout.Toggle(EnableMap, "Show in map");
             EnableText = GUILayout.Toggle(EnableText, "Show HUD text");
             HideWithUI = GUILayout.Toggle(HideWithUI, "Hide with UI");

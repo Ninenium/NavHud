@@ -1,4 +1,4 @@
-NavHud - 1.3.0 - by Ninenium
+NavHud - 1.3.1 - by Ninenium
 Some parts were written by Michel Dusseault (Addle or RealGrep on Github).
 Port to KSP version 1.1 by Chris "iPeer" Wignall
 
@@ -14,6 +14,8 @@ License:
 MIT
 
 Change-log:
+version 1.3.1
+ - Removed waypoint functionality to resolve compatibility issues with KSP 1.1.3
 version 1.3.0
  - Updated to KSP 1.1 (iPeer)
 version 1.2.2
