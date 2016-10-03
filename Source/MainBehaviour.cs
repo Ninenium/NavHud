@@ -396,7 +396,7 @@ namespace NavHud
         private void UpdateLines(Matrix4x4 worldToCamMat)
         {
             // Vectors pointing up and east (not normalized)
-            Vector3d position = FlightGlobals.ActiveVessel.findWorldCenterOfMass();
+            Vector3d position = FlightGlobals.ActiveVessel.CurrentCoM;
             Vector3d worldUp = position - FlightGlobals.ActiveVessel.mainBody.position;
             Vector3d worldEast = FlightGlobals.ActiveVessel.mainBody.getRFrmVel(position);
 
