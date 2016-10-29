@@ -1,4 +1,4 @@
-NavHud - 1.3.2 - by Ninenium
+NavHud - 1.3.3 - by Ninenium
 Some parts were written by Michel Dusseault (Addle or RealGrep on Github).
 Port to KSP version 1.1 by Chris "iPeer" Wignall
 Port to KSP version 1.2 by bwheatley
@@ -15,6 +15,8 @@ License:
 MIT
 
 Change-log:
+version 1.3.3
+ - Fixed ToolbarWrapper
 version 1.3.2
  - Updated to KSP 1.2 (bwheatley)
 version 1.3.1
